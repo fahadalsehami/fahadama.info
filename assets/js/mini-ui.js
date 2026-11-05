@@ -215,62 +215,7 @@
     return { start: function () {}, stop: function () {} };
   }
 
-  /* ---------------- Marsad: a stance network in its own console style ---------------- */
-  function network(root) {
-    var r = (function (seed) { return function () { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }; })(4242);
-    var groups = [["pro", 74, 78, 7], ["con", 226, 76, 7], ["neutral", 150, 124, 6]];
-    var nodes = [], edges = [];
-    groups.forEach(function (g) {
-      for (var i = 0; i < g[3]; i++) {
-        var a = (i / g[3]) * Math.PI * 2 + r() * 0.6, d = i === 0 ? 0 : 20 + r() * 26;
-        nodes.push({ x: g[1] + Math.cos(a) * d * 1.25, y: g[2] + Math.sin(a) * d * 0.8, s: g[0], hub: i === 0, r: i === 0 ? 7 : 3.5 + r() * 2.5 });
-      }
-    });
-    nodes.forEach(function (n, i) {
-      nodes.forEach(function (m, j) {
-        if (j <= i) return;
-        var d = Math.hypot(n.x - m.x, n.y - m.y);
-        if ((n.s === m.s && d < 52) || (n.hub && m.hub) || (d < 70 && r() < 0.12)) edges.push([i, j]);
-      });
-    });
-    var svg = '<svg viewBox="0 0 300 160" aria-hidden="true">';
-    edges.forEach(function (e, k) {
-      var a = nodes[e[0]], b = nodes[e[1]];
-      svg += '<line class="nb-edge" data-a="' + e[0] + '" data-b="' + e[1] + '" x1="' + a.x.toFixed(1) + '" y1="' + a.y.toFixed(1) + '" x2="' + b.x.toFixed(1) + '" y2="' + b.y.toFixed(1) + '"/>';
-    });
-    nodes.forEach(function (n, i) {
-      svg += '<circle class="nb-node ' + n.s + '" data-i="' + i + '" cx="' + n.x.toFixed(1) + '" cy="' + n.y.toFixed(1) + '" r="' + n.r.toFixed(1) + '"/>';
-    });
-    svg += "</svg>";
-    var box = el("div", "mini mini-network");
-    box.innerHTML =
-      '<div class="nb-console">' +
-      '<div class="nb-head"><b>Marsad</b><span class="nb-ar" lang="ar">مرصد</span><span class="nb-chip">Topic network</span></div>' +
-      svg +
-      '<div class="nb-foot"><span class="nb-key pro">pro</span><span class="nb-key con">con</span><span class="nb-key neutral">neutral</span><span class="nb-lang">EN · <span lang="ar">ع</span></span></div>' +
-      "</div>";
-    root.appendChild(box);
-    var hubs = [];
-    nodes.forEach(function (n, i) { if (n.hub) hubs.push(i); });
-    var circles = box.querySelectorAll(".nb-node"), lines = box.querySelectorAll(".nb-edge");
-    var tl = Timeline(), k = 0;
-    function focus(i) {
-      circles.forEach(function (c) { c.classList.toggle("is-focus", +c.getAttribute("data-i") === i); });
-      lines.forEach(function (l) {
-        var on = +l.getAttribute("data-a") === i || +l.getAttribute("data-b") === i;
-        l.classList.toggle("is-on", on);
-      });
-    }
-    function run() {
-      tl.clear();
-      focus(hubs[k % hubs.length]);
-      k++;
-      tl.at(2400, run);
-    }
-    return { start: run, stop: tl.clear };
-  }
-
-  var kinds = { session: session, leaderboard: leaderboard, chart: chart, globe: globe, consensus: consensus, complex: complex, network: network };
+  var kinds = { session: session, leaderboard: leaderboard, chart: chart, globe: globe, consensus: consensus, complex: complex };
 
   function mount(container, media) {
     var ctl;

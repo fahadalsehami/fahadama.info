@@ -41,6 +41,22 @@
     return a.slice(i).join(" ");
   }
 
+  /* Split a title into n lines of words, as even in length as possible. */
+  function balance(text, n) {
+    var w = String(text).split(/\s+/), best = null;
+    if (w.length < n) return [String(text)];
+    (function go(start, k, acc) {
+      if (k === 1) {
+        var parts = acc.concat([w.slice(start).join(" ")]);
+        var m = Math.max.apply(null, parts.map(function (x) { return x.length; }));
+        if (!best || m < best.m) best = { m: m, parts: parts };
+        return;
+      }
+      for (var i = start + 1; i <= w.length - (k - 1); i++) go(i, k - 1, acc.concat([w.slice(start, i).join(" ")]));
+    })(0, n, []);
+    return best.parts;
+  }
+
   var PALETTE = [["#2F4A8A", "#E8B04B"], ["#B4532E", "#F1E3C8"], ["#1F5B4F", "#E9C46A"], ["#E7D9B8", "#B4532E"], ["#20201E", "#E8DCC2"], ["#8DA7C9", "#2B3A55"], ["#6B2E3A", "#E7C9A0"]];
 
   function starfield(canvas) {
@@ -72,6 +88,9 @@
     stage.className = "shelf-stage";
     stage.innerHTML =
       '<canvas class="shelf-stars" aria-hidden="true"></canvas>' +
+      // The plank sits outside the scroller: Chrome stops drawing a wide 3D layer
+      // past the first screen of a scrolled scene, and the plank looks the same everywhere.
+      '<div class="shelf-floor" aria-hidden="true"><span class="shelf-plank"><span class="plank-top"></span><span class="plank-front"></span></span></div>' +
       '<div class="shelf-scroller"><div class="shelf-track" role="list" aria-label="Books"></div></div>' +
       '<div class="shelf-caption" aria-live="polite"><h3></h3><p class="by"></p><p class="note"></p></div>';
     root.appendChild(stage);
@@ -82,9 +101,6 @@
     var capTitle = cap.querySelector("h3"), capBy = cap.querySelector(".by"), capNote = cap.querySelector(".note");
     starfield(stage.querySelector(".shelf-stars"));
 
-    var plank = '<span class="shelf-plank" aria-hidden="true"><span class="plank-top"></span><span class="plank-front"></span></span>';
-    track.insertAdjacentHTML("beforeend", plank);
-
     var els = books.map(function (b, i) {
       var pal = PALETTE[i % PALETTE.length];
       var color = b.color || pal[0], accent = b.accent || pal[1];
@@ -92,29 +108,54 @@
       var sw = Math.round(58 * wk), bh = Math.round(286 * hk), bd = Math.round(196 * hk);
       var ink = b.ink || inkFor(color);
       var serif = b.font === "serif";
-      // Fit the spine title: shrink the type for long titles so they read in full.
-      var author = surname(b.author);
-      var room = bh - 30 - 14 - 26 - 16 - 14 - author.length * 6.4;
-      var title = String(b.title);
-      var fit = serif ? room / (title.length * 0.5) : room / (title.length * 0.78);
-      var size = serif ? clamp(fit, 9, 16) : clamp(fit, 8, 13);
+      // Fit the spine: long author names get smaller type, and long titles shrink
+      // and then wrap onto two or three lines, as real spines do.
+      var author = b.spineAuthor || surname(b.author);
+      var aSize = clamp((bh * 0.36) / (Math.max(author.length, 1) * 0.5), 9, 12);
+      var room = bh - 30 - 14 - 26 - 16 - 14 - author.length * aSize * 0.53;
+      var title = String(b.spineTitle || b.title);
+      var k = serif ? 0.56 : 0.78, lo = serif ? 9 : 8, hi = serif ? 16 : 13, across = sw - 18;
+      function fits(ls) { return room / (Math.max.apply(null, ls.map(function (x) { return x.length; })) * k); }
+      var lines = [title], size = fits(lines);
+      for (var n = 2; n <= 3 && size < lo; n++) {
+        var ls = balance(title, n), s2 = Math.min(fits(ls), across / (n * 1.12));
+        if (ls.length === n && s2 >= lo * 0.9 && s2 > size) { lines = ls; size = s2; }
+      }
+      size = clamp(size, lo, hi);
+      var coverSize = title.length > 48 ? 19 : title.length > 30 ? 22 : 25;
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "book" + (serif ? " is-serif" : "");
       btn.setAttribute("role", "listitem");
       btn.setAttribute("aria-label", b.title + (b.author ? ", by " + b.author : ""));
-      btn.style.cssText = "--sw:" + sw + "px;--bh:" + bh + "px;--bd:" + bd + "px;--color:" + color + ";--book-accent:" + accent + ";--ink-on:" + ink + ";--color-2:" + shade(color, -0.22) + ";--color-3:" + shade(color, 0.1) + ";--title-size:" + size.toFixed(1) + "px";
+      btn.style.cssText = "--sw:" + sw + "px;--bh:" + bh + "px;--bd:" + bd + "px;--color:" + color + ";--book-accent:" + accent + ";--ink-on:" + ink + ";--color-2:" + shade(color, -0.22) + ";--color-3:" + shade(color, 0.1) + ";--title-size:" + size.toFixed(1) + "px;--author-size:" + aSize.toFixed(1) + "px;--cover-size:" + coverSize + "px";
       var cover = b.cover
         ? '<img src="' + esc(b.cover) + '" alt="" loading="lazy" decoding="async">'
         : '<span class="cover-rule"></span><span class="cover-title">' + esc(b.title) + '</span><span class="cover-author">' + esc(b.author || "") + "</span>";
       btn.innerHTML =
-        '<span class="book-spine" aria-hidden="true"><span class="rule"></span><span class="title">' + esc(b.title) + '</span><span class="dot"></span><span class="author">' + esc(author) + '</span><span class="rule"></span></span>' +
+        '<span class="book-spine" aria-hidden="true"><span class="rule"></span><span class="title' + (lines.length > 1 ? " is-multi" : "") + '">' + lines.map(esc).join("<br>") + '</span><span class="dot"></span><span class="author">' + esc(author) + '</span><span class="rule"></span></span>' +
         '<span class="book-cover" aria-hidden="true">' + cover + "</span>" +
         '<span class="book-back" aria-hidden="true"></span>';
       btn._book = b;
       track.appendChild(btn);
       return btn;
     });
+
+    /* Estimates set the first size; once fonts are in, shrink any title that still
+       runs past its spine. Only ever shrinks, so running it again is harmless. */
+    function refit() {
+      els.forEach(function (btn) {
+        var t = btn.querySelector(".book-spine .title");
+        if (!t.clientHeight) return;
+        var sz = parseFloat(getComputedStyle(t).fontSize), min = btn.classList.contains("is-serif") ? 8.5 : 7.5;
+        while (t.scrollHeight > t.clientHeight + 1 && sz > min) { sz -= 0.25; t.style.fontSize = sz + "px"; }
+      });
+    }
+    // Measure only with the real fonts in: a wider fallback font would shrink titles for good.
+    var fontsIn = !(document.fonts && document.fonts.ready);
+    if (!fontsIn) document.fonts.ready.then(function () { fontsIn = true; refit(); });
+    if ("ResizeObserver" in window) new ResizeObserver(function () { if (fontsIn) refit(); }).observe(track);
+    else setTimeout(refit, 400);
 
     var open = null, shown = null;
     var start = 0;
@@ -140,9 +181,26 @@
       els[i].setAttribute("aria-expanded", "true");
       track.classList.add("has-open");
       caption(i, true);
-      // keep the opened book in view
-      var r = els[i].getBoundingClientRect(), s = scroller.getBoundingClientRect();
-      if (r.left < s.left + 40 || r.right > s.right - 40) scroller.scrollBy({ left: (r.left + r.width / 2) - (s.left + s.width / 2), behavior: reduce ? "auto" : "smooth" });
+      centerOn(els[i]);
+    }
+
+    /* An open book shows its cover face-on, about 250px wide, so glide it to the
+       middle of a long shelf. The first and last books can't reach the middle, so
+       the shelf grows a little extra plank at that end when it needs to. */
+    var padL = 0, padR = 0;
+    function centerOn(btn) {
+      if (scroller.scrollWidth <= scroller.clientWidth + 1) return; // the whole shelf is in view
+      var r = btn.getBoundingClientRect(), s = scroller.getBoundingClientRect();
+      var delta = (r.left + r.width / 2) - (s.left + s.width / 2);
+      if (Math.abs(delta) < 2) return;
+      var roomR = scroller.scrollWidth - scroller.clientWidth - scroller.scrollLeft;
+      if (delta > roomR) { padR += Math.ceil(delta - roomR); track.style.setProperty("--pad-r", padR + "px"); }
+      if (-delta > scroller.scrollLeft) {
+        var add = Math.ceil(-delta - scroller.scrollLeft);
+        padL += add; track.style.setProperty("--pad-l", padL + "px");
+        scroller.scrollLeft += add; // the books moved right by add; keep the view where it was
+      }
+      scroller.scrollBy({ left: delta, behavior: reduce ? "auto" : "smooth" });
     }
 
     els.forEach(function (btn, i) {
