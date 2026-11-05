@@ -103,8 +103,8 @@ window.SITE = {
      media: { image, alt, tone } shows a screenshot in a window frame.
      tone sets the backdrop: "sky", "mint", "lilac", "blue", "paper" or "rust".
      Work with no public screenshot yet can use a drawn card instead:
-     "complex" (a cell complex), "network" (a stance network), "session",
-     "leaderboard", "chart", "globe" or "consensus". */
+     "complex" (a cell complex), "session", "leaderboard", "chart", "globe"
+     or "consensus". */
   projects: {
     title: "Selected work",
     note: "Things I've built and shipped :)",
@@ -170,16 +170,6 @@ window.SITE = {
         media: "complex", // a cell complex drawn in particles; swap for a screenshot once results are public
       },
       {
-        id: "marsad",
-        eyebrow: "Research agent · Social science",
-        title: "Marsad",
-        url: "",
-        detail:
-          "A research agent that reads X as a social graph. From one prompt it finds the accounts and Spaces that matter, labels harmful content with Arabic and English language and image analysis, and maps the network: communities, bridges, influence, and each account's stance on a topic, pro, con or neutral, over time. Private accounts stay pseudonymous, and every identity shown is audit-logged.",
-        tags: ["Arabic + English NLP", "Network science", "Bilingual console"],
-        media: "network", // drawn in Marsad's own console style, with no real accounts
-      },
-      {
         id: "botim",
         eyebrow: "Co-founder · Acquired 2023",
         title: "BOTIM",
@@ -204,52 +194,150 @@ window.SITE = {
 
   /* ---------------- Bookshelf ----------------
      Add books to show the Bookshelf tab. Each book:
-     { title: "", author: "", note: "One or two lines on why it matters to you.",
-       color: "#2f4a8a", accent: "#e8b04b", height: 1, width: 1 }   (height/width are optional, around 0.8–1.15) */
+     { title: "", author: "", note: "A line about the book, or why it matters to you.",
+       color: "#2f4a8a", accent: "#e8b04b", height: 1, width: 1 }
+     Optional: ink (spine text colour), font: "serif", spineTitle / spineAuthor
+     (shorter text for the spine only), reading: true (show that book first),
+     cover: "content/books/…" (a real cover image). height/width run about 0.75–1.15 and 0.7–1.4. */
   books: {
-    title: "On the shelf: networks, minds, machines and building companies.",
+    title: "On the shelf: machine learning, statistics, history and power.",
     hint: "Hover to preview. Drag to browse. Select a book to open it.",
-    // A starter shelf: swap in your own books, notes and colours.
+    // Each note is the book's own subtitle or edition. Replace any with your own words.
     items: [
+      // Machine learning and the math beneath it
       {
-        title: "The Cold Start Problem", author: "Andrew Chen",
-        note: "How networks start, tip and defend themselves: the playbook behind messaging apps and marketplaces.",
-        color: "#1F3A8A", accent: "#F2C14E", height: 1.02,
+        title: "Deep Learning", author: "Ian Goodfellow, Yoshua Bengio & Aaron Courville",
+        note: "",
+        color: "#B9C4CF", accent: "#3E4B5B", ink: "#27303A", height: 1.1, width: 1.35,
       },
       {
-        title: "Connected", author: "Nicholas A. Christakis & James H. Fowler",
-        note: "How behaviour, health and ideas spread through social networks, three degrees out.",
-        color: "#C9472D", accent: "#F4E3C6", height: 0.92, font: "serif",
+        title: "Hands-On Machine Learning with Scikit-Learn, Keras, and TensorFlow", author: "Aurélien Géron",
+        note: "Concepts, Tools, and Techniques to Build Intelligent Systems. Second edition.",
+        color: "#F2F0EA", accent: "#D2332B", ink: "#1C1C1C", height: 1.08, width: 1.3,
       },
       {
-        title: "Graph Representation Learning", author: "William L. Hamilton",
-        note: "A clear path from node embeddings to graph neural networks, the ground topological deep learning builds on.",
-        color: "#E9E4D6", accent: "#2F6B5A", height: 1.08,
+        title: "Reinforcement Learning", author: "Richard S. Sutton & Andrew G. Barto",
+        note: "An Introduction. Second edition.",
+        color: "#ECEBE7", accent: "#2F6FB1", ink: "#3A3A3A", height: 1.1, width: 1.2,
       },
       {
-        title: "The Alignment Problem", author: "Brian Christian",
-        note: "Why models learn what we measure rather than what we meant, and what it takes to trust them.",
-        color: "#151515", accent: "#E8DCC2", height: 1.0,
+        title: "Deep Reinforcement Learning Hands-On", author: "Maxim Lapan",
+        note: "Second edition.",
+        color: "#1D1D1F", accent: "#E8742C", ink: "#F4F0E8", height: 1.05, width: 1.25,
       },
       {
-        title: "The Signal and the Noise", author: "Nate Silver",
-        note: "Prediction, uncertainty and calibration: knowing which numbers to believe.",
-        color: "#F3D046", accent: "#1C1A17", height: 1.1,
+        title: "Understanding Machine Learning", author: "Shai Shalev-Shwartz & Shai Ben-David",
+        note: "From Theory to Algorithms.",
+        color: "#8C2E29", accent: "#F1E3C8", height: 1.04, width: 1.05,
       },
       {
-        title: "Thinking in Systems", author: "Donella H. Meadows",
-        note: "Stocks, flows and feedback loops: the plainest way into dynamical systems.",
-        color: "#2E6B47", accent: "#EBD9A8", height: 0.98, font: "serif",
+        title: "Bayesian Reasoning and Machine Learning", author: "David Barber",
+        note: "",
+        color: "#D63A50", accent: "#F4D44D", ink: "#F7DA55", height: 1.1, width: 1.25,
       },
       {
-        title: "The Body Keeps the Score", author: "Bessel van der Kolk",
-        note: "Trauma, the body and the long road of treatment: the clinical world behavioral-health AI has to serve.",
-        color: "#3B5BA9", accent: "#F2A07B", height: 1.12,
+        title: "An Introduction to Statistical Learning", author: "Gareth James, Daniela Witten, Trevor Hastie & Robert Tibshirani",
+        note: "With Applications in R.",
+        color: "#E9BA25", accent: "#1F2F5C", ink: "#1F2F5C", height: 1.05, width: 1.05,
       },
       {
-        title: "Zero to One", author: "Peter Thiel",
-        note: "Notes on building something new instead of copying what works.",
-        color: "#E7E2D8", accent: "#3A6EA5", height: 0.9,
+        title: "Statistical Inference", author: "George Casella & Roger L. Berger",
+        note: "Second edition.",
+        color: "#3A1F23", accent: "#D8344A", height: 1.05, width: 1.15,
+      },
+      {
+        title: "Practical Statistics for Data Scientists", author: "Peter Bruce & Andrew Bruce",
+        note: "50 Essential Concepts.",
+        color: "#C9342F", accent: "#F4F0E8", height: 1.0, width: 0.9,
+      },
+      {
+        title: "Python Data Science Handbook", author: "Jake VanderPlas",
+        note: "Essential Tools for Working with Data.",
+        color: "#CE3F2C", accent: "#F3E6D3", height: 1.0, width: 1.1,
+      },
+      {
+        title: "Linear Algebra and Its Applications", author: "Gilbert Strang",
+        note: "Fourth edition.",
+        color: "#F1EFE9", accent: "#D4483A", ink: "#24365F", height: 1.05, width: 0.95,
+      },
+      {
+        title: "R in Action", author: "Robert I. Kabacoff",
+        note: "Data Analysis and Graphics with R. Second edition.",
+        color: "#B8B896", accent: "#B83A2E", ink: "#1E1E1E", height: 1.0, width: 1.05,
+      },
+      {
+        title: "Artificial Intelligence", author: "Nils J. Nilsson",
+        note: "A New Synthesis.",
+        color: "#4A2D80", accent: "#E7E1F4", height: 1.04, width: 1.0,
+      },
+      // AI and people
+      {
+        title: "The Book of Why", author: "Judea Pearl & Dana Mackenzie",
+        note: "The New Science of Cause and Effect.",
+        color: "#E46C3E", accent: "#FBE4C8", height: 0.98, width: 0.95,
+      },
+      {
+        title: "Deep Thinking", author: "Garry Kasparov",
+        note: "Where Machine Intelligence Ends and Human Creativity Begins.",
+        color: "#E15A35", accent: "#262626", height: 0.98, width: 0.9,
+      },
+      {
+        title: "Human + Machine", author: "Paul R. Daugherty & H. James Wilson",
+        note: "Reimagining Work in the Age of AI.",
+        color: "#C9346F", accent: "#F7C948", height: 1.0, width: 0.85,
+      },
+      {
+        title: "Deep Medicine", author: "Eric Topol",
+        note: "How Artificial Intelligence Can Make Healthcare Human Again.",
+        color: "#DCE5EB", accent: "#D2322B", ink: "#56616B", height: 1.0, width: 1.0,
+      },
+      {
+        title: "Make, Think, Imagine", author: "John Browne",
+        note: "Engineering the Future of Civilisation.",
+        color: "#202020", accent: "#E8DCC2", height: 1.02, width: 0.95,
+      },
+      // Building
+      {
+        title: "Why the Lean Start-Up Changes Everything", author: "Steve Blank",
+        note: "Harvard Business Review, May 2013.",
+        color: "#F1EEE8", accent: "#B4232A", ink: "#1E1E1E", height: 0.92, width: 0.8,
+      },
+      // History and power
+      {
+        title: "The Ancient City", author: "Numa Denis Fustel de Coulanges", spineAuthor: "Fustel de Coulanges",
+        note: "A Study on the Religion, Laws, and Institutions of Greece and Rome.",
+        color: "#E7A18E", accent: "#1E1A1A", ink: "#1E1A1A", height: 0.98, width: 1.05, font: "serif",
+      },
+      {
+        title: "The True Believer", author: "Eric Hoffer",
+        note: "Thoughts on the Nature of Mass Movements.",
+        color: "#C92F2A", accent: "#F2EEE8", height: 0.92, width: 0.75,
+      },
+      {
+        title: "The Managerial Revolution", author: "James Burnham",
+        note: "What Is Happening in the World.",
+        color: "#1D1D1D", accent: "#C8322E", ink: "#E3C9B7", height: 1.0, width: 0.9, font: "serif",
+      },
+      {
+        title: "The Machiavellians", author: "James Burnham",
+        note: "Defenders of Freedom.",
+        color: "#3E3A23", accent: "#C2A55A", ink: "#EDE3C7", height: 1.0, width: 0.9, font: "serif",
+      },
+      {
+        title: "History Has Begun", author: "Bruno Maçães",
+        note: "The Birth of a New America.",
+        color: "#C51F2A", accent: "#F4F0E8", height: 1.0, width: 0.95, font: "serif",
+      },
+      {
+        title: "Surprise, Kill, Vanish", author: "Annie Jacobsen",
+        note: "The Secret History of CIA Paramilitary Armies, Operators, and Assassins.",
+        color: "#2A2623", accent: "#D9783A", ink: "#EFE7DC", height: 1.06, width: 1.15,
+      },
+      // The inner life
+      {
+        title: "A New Earth", author: "Eckhart Tolle",
+        note: "Awakening to Your Life’s Purpose.",
+        color: "#F0A12F", accent: "#1F2A44", ink: "#1F2A44", height: 0.98, width: 0.95, font: "serif",
       },
     ],
   },
@@ -264,7 +352,6 @@ window.SITE = {
         label: "Social science",
         figure: "network",
         text: "Thinking about the next generation of social science, where politics is read as a social graph: who holds influence, how trust and attention spread, and how network effects decide which ideas, leaders and movements win.",
-        project: "marsad", // links to that card in Projects
         photos: [], // e.g. [{ src: "content/photos/hike-1.webp", caption: "Mission Peak" }]
       },
       {
