@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Lost in the stars · Fahad Alsehami</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#050508">
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <style>
+    @font-face { font-family: "Newsreader"; src: url("/assets/fonts/newsreader.woff2") format("woff2"); font-weight: 200 800; font-display: swap; }
+    @font-face { font-family: "Geist Mono"; src: url("/assets/fonts/geist-mono.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+    html, body { margin: 0; height: 100%; background: #050508; color: #F4F0E8; }
+    body { display: grid; place-items: center; min-height: 100dvh; overflow: hidden; -webkit-font-smoothing: antialiased; }
+    canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; }
+    main { position: relative; padding: 24px; text-align: center; text-shadow: 0 0 14px rgba(255, 214, 190, 0.18); }
+    h1 { margin: 0; font-family: "Newsreader", Georgia, serif; font-weight: 400; font-size: clamp(2.6rem, 1.6rem + 4vw, 4.4rem); line-height: 1; letter-spacing: -0.035em; }
+    p { margin: 22px 0 0; font-family: "Geist Mono", ui-monospace, Menlo, monospace; font-size: 14px; font-weight: 300; line-height: 1.7; color: #CFC9BE; }
+    a { color: #E99474; text-underline-offset: 4px; }
+    a:focus-visible { outline: 2px solid #E99474; outline-offset: 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <canvas aria-hidden="true"></canvas>
+  <main>
+    <h1>Lost in the stars</h1>
+    <p>This page drifted out of orbit.<br><a id="home" href="/">Head back home</a></p>
+  </main>
+  <script>
+    (function () {
+      // On a GitHub project address (user.github.io/repo/), home is the repo folder.
+      if (/\.github\.io$/.test(location.hostname)) {
+        var first = location.pathname.split("/")[1];
+        if (first && first.indexOf(".") < 0) document.getElementById("home").setAttribute("href", "/" + first + "/");
+      }
+      var c = document.querySelector("canvas"), x = c.getContext("2d");
+      function paint() {
+        var d = Math.min(2, window.devicePixelRatio || 1), w = innerWidth, h = innerHeight, s = 7;
+        c.width = w * d; c.height = h * d; x.setTransform(d, 0, 0, d, 0, 0);
+        var g = x.createRadialGradient(w * 0.66, h * 0.3, 0, w * 0.66, h * 0.3, Math.max(w, h) * 0.5);
+        g.addColorStop(0, "rgba(120,52,72,0.18)"); g.addColorStop(1, "rgba(120,52,72,0)");
+        x.fillStyle = g; x.fillRect(0, 0, w, h);
+        for (var i = 0, n = (w * h) / 900; i < n; i++) {
+          s = (s * 16807) % 2147483647; var a = s / 2147483647;
+          s = (s * 16807) % 2147483647; var b = s / 2147483647;
+          s = (s * 16807) % 2147483647; var k = s / 2147483647;
+          x.fillStyle = "rgba(236,236,255," + (0.2 + k * 0.6).toFixed(2) + ")";
+          x.fillRect(Math.round(a * w), Math.round(b * h), k > 0.96 ? 2 : 1, k > 0.96 ? 2 : 1);
+        }
+      }
+      paint();
+      addEventListener("resize", paint);
+    })();
+  </script>
+</body>
+</html>
