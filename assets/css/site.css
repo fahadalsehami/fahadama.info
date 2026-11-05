@@ -1056,13 +1056,24 @@ a.work-media:hover { transform: translateY(-3px); }
   width: max-content;
   min-width: 100%;
   height: 430px;
-  padding: 0 56px 64px;
+  padding: 0 calc(56px + var(--pad-r, 0px)) 64px calc(56px + var(--pad-l, 0px));
   transform-style: preserve-3d;
   cursor: grab;
 }
 .shelf-track.is-dragging { cursor: grabbing; }
 
-/* The shelf is part of the same 3D scene, so its top recedes like the books. */
+/* The floor has the scroller's box and perspective, so the plank's top recedes
+   exactly as it would under the books, but it never scrolls. */
+.shelf-floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 430px;
+  perspective: 1100px;
+  perspective-origin: 50% 42%;
+  pointer-events: none;
+}
 .shelf-plank {
   position: absolute;
   left: 0;
@@ -1154,6 +1165,7 @@ a.work-media:hover { transform: translateY(-3px); }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.book-spine .title.is-multi { line-height: 1.12; }
 .book.is-serif .book-spine .title {
   font-family: var(--serif);
   font-size: var(--title-size, 16px);
@@ -1164,11 +1176,11 @@ a.work-media:hover { transform: translateY(-3px); }
 .book-spine .dot { flex: none; width: 4px; height: 4px; margin: 6px 0; border-radius: 50%; background: var(--book-accent); }
 .book-spine .author {
   flex: none;
-  max-height: 34%;
+  max-height: 40%;
   margin-bottom: 14px;
   writing-mode: vertical-rl;
   font-family: var(--serif);
-  font-size: 12px;
+  font-size: var(--author-size, 12px);
   font-style: italic;
   white-space: nowrap;
   overflow: hidden;
@@ -1193,7 +1205,7 @@ a.work-media:hover { transform: translateY(-3px); }
 .book-cover .cover-rule { width: 40px; height: 3px; background: var(--book-accent); }
 .book-cover .cover-title {
   font-family: var(--serif);
-  font-size: 25px;
+  font-size: var(--cover-size, 25px);
   line-height: 1.06;
   letter-spacing: -0.02em;
 }
@@ -1385,43 +1397,6 @@ a.work-media:hover { transform: translateY(-3px); }
 .complex-key .k-edge { width: 12px; height: 2px; background: #E2E8F4; }
 .complex-key .k-node { width: 5px; height: 5px; border-radius: 50%; background: #E2E8F4; }
 
-/* Marsad: neo-brutalist console, as in the tool itself */
-.mini-network { background: #F2D04A; }
-.nb-console {
-  width: 78%;
-  border: 2px solid #111;
-  border-radius: 6px;
-  background: #FFFDF6;
-  box-shadow: 6px 6px 0 #111;
-  color: #111;
-}
-.nb-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-bottom: 2px solid #111;
-  font-size: 10px;
-}
-.nb-head b { font-family: var(--sans); font-size: 12.5px; font-weight: 800; letter-spacing: -0.01em; }
-.nb-ar { font-family: "Geeza Pro", "Noto Naskh Arabic", var(--sans); font-size: 12px; }
-.nb-chip { margin-left: auto; padding: 2px 8px; border: 1.5px solid #111; border-radius: 999px; background: #F2D04A; font-size: 9px; font-weight: 600; }
-.mini-network svg { display: block; width: 100%; height: auto; padding: 4px 6px 0; }
-.nb-edge { stroke: #111; stroke-opacity: 0.16; stroke-width: 1; transition: stroke-opacity 0.4s ease, stroke-width 0.4s ease; }
-.nb-edge.is-on { stroke-opacity: 0.85; stroke-width: 1.6; }
-.nb-node { stroke: #111; stroke-width: 1.2; transition: stroke-width 0.3s ease; }
-.nb-node.pro { fill: #3A9A62; }
-.nb-node.con { fill: #E0533A; }
-.nb-node.neutral { fill: #BDB7AC; }
-.nb-node.is-focus { stroke-width: 3; }
-.nb-foot { display: flex; align-items: center; gap: 10px; padding: 6px 12px 9px; border-top: 2px solid #111; font-size: 9.5px; }
-.nb-key { display: inline-flex; align-items: center; gap: 5px; }
-.nb-key::before { content: ""; width: 7px; height: 7px; border: 1.2px solid #111; border-radius: 50%; }
-.nb-key.pro::before { background: #3A9A62; }
-.nb-key.con::before { background: #E0533A; }
-.nb-key.neutral::before { background: #BDB7AC; }
-.nb-lang { margin-left: auto; font-weight: 600; }
-
 /* a card someone linked to */
 .work.is-flash .work-media { animation: flash 1.6s ease; }
 @keyframes flash {
@@ -1584,7 +1559,8 @@ a.work-media:hover { transform: translateY(-3px); }
   .interest canvas { width: 140px; height: 124px; }
   .interest-detail { grid-template-columns: minmax(0, 1fr); padding-top: 64px; }
   .shelf-title { font-size: 32px; }
-  .shelf-track { height: 380px; padding: 0 28px 64px; }
+  .shelf-track { height: 380px; padding: 0 calc(28px + var(--pad-r, 0px)) 64px calc(28px + var(--pad-l, 0px)); }
+  .shelf-floor { height: 380px; }
   .shelf-caption h3 { font-size: 26px; }
   .contact { padding-top: 110px; }
   .contact-list { grid-template-columns: minmax(0, 1fr); }
