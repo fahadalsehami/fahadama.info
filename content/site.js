@@ -12,7 +12,7 @@ window.SITE = {
   meta: {
     title: "Fahad Alsehami",
     description:
-      "Fahad Alsehami is a serial entrepreneur: founder of Medera AI, the AI co-therapy OS for behavioral health, and co-founder of BOTIM.",
+      "Fahad Alsehami is a serial entrepreneur: founder of Medera, the AI co-therapy OS for behavioral health, and co-founder of BOTIM.",
     url: "https://fahadama.info",
   },
 
@@ -41,16 +41,15 @@ window.SITE = {
     lead: "What I do:",
     statement: "build from zero to scale, take research into the clinic, and make AI earn trust.",
     paragraphs: [
-      "I'm the founder of [Medera AI](https://www.medera.info), the AI co-therapy OS for behavioral health. Before Medera I co-founded BOTIM and worked on its product; it became the Middle East's first VoIP unicorn and was acquired in 2023 by G42-backed Astra Tech, alongside a $500M round led by G42.",
-      "At Medera our agents carry the work around every therapy and primary-care session, from the intake packet to the claim, and nothing is filed without a clinician's review. I work across multi-agent orchestration, clinical speech recognition in English and Arabic, multimodal biomarkers, and FHIR and HL7 interoperability.",
+      "I'm the founder of [Medera](https://www.medera.info), the AI co-therapy OS for behavioral health. Before Medera I co-founded BOTIM and worked on its product; it became the Middle East's first VoIP unicorn and was acquired in 2023 by G42-backed Astra Tech, alongside a $500M round led by G42.",
+      "At Medera our agents carry the work around every therapy and primary-care session, from the intake packet to the claim, and nothing is filed without a clinician's review. I work across multi-agent orchestration, clinical speech recognition in English and Arabic, multimodal biomarkers (vocal, facial, physiological, neuro and clinical), and FHIR and HL7 interoperability.",
       "I care about verification: the layers that make language models safe enough for psychiatry. I write about it in [Signal & Symptom](https://alsehami.substack.com).",
-      "In 2018 I won the MIT Grand Prize in New York.",
     ],
     facts: [
-      { label: "Currently", value: "Medera AI, founder" },
+      { label: "Currently", value: "Medera, founder" },
       { label: "Working across", value: "AI, behavioral health, speech" },
       { label: "Previously", value: "BOTIM, co-founder and product" },
-      { label: "Recognition", value: "MIT Grand Prize, New York 2018" },
+      { label: "Recognition", value: "[MIT Hacking Medicine Grand Prize, New York 2018](#talks/mit-hacking-medicine)" },
     ],
     emblem: { kind: "laurel", label: "2018" }, // drawn in particles under the facts
   },
@@ -61,7 +60,7 @@ window.SITE = {
     {
       dates: "Present",
       title: "Founder",
-      org: "Medera AI",
+      org: "Medera",
       orgUrl: "https://www.medera.info",
       place: "San Francisco",
       logo: { src: "content/logos/medera.png", alt: "Medera logo" },
@@ -77,15 +76,6 @@ window.SITE = {
       logo: { src: "content/logos/substack.png", alt: "Substack logo" },
       detail:
         "Started writing about building agentic AI to rewire mental healthcare, then turned to the epistemological crisis of LLMs in psychiatry: how to detect hallucinations, and why dynamical systems theory offers a way forward.",
-    },
-    {
-      dates: "2018",
-      title: "Grand Prize Winner",
-      org: "MIT",
-      orgUrl: "",
-      place: "New York",
-      logo: { src: "content/logos/award.svg", alt: "" },
-      detail: "Won the MIT Grand Prize in New York City.",
     },
     {
       dates: "2017",
@@ -188,6 +178,56 @@ window.SITE = {
           "Where AI engineering meets clinical reality: essays on building, verifying and safely deploying intelligent systems in behavioral health.",
         tags: ["Substack", "Essays"],
         media: { image: "content/projects/signal-and-symptom.webp", alt: "The Signal & Symptom publication on Substack", tone: "lilac" },
+      },
+    ],
+  },
+
+  /* ---------------- Talks & prizes ----------------
+     Each item: { id, year, place, title, role, detail, badge, photos }.
+     photos: [{ src, alt, caption, width, height }]. The first photo is pinned large;
+     a second one is pinned over its corner. badge is the round sticker on the photo.
+     Link to an item with #talks/<id>. */
+  talks: {
+    label: "Talks & prizes",
+    title: "Talks & prizes",
+    note: "Where I've spoken, won and judged :)",
+    items: [
+      {
+        id: "mit-hacking-medicine",
+        year: "2018",
+        place: "New York City",
+        title: "Grand Prize, MIT Hacking Medicine",
+        role: "Speaker · Grand Prize winner",
+        detail: "Spoke on stage at MIT Hacking Medicine in New York City and won the Grand Prize.",
+        badge: "Grand Prize",
+        photos: [
+          {
+            src: "content/talks/mit-hacking-medicine-stage.webp", width: 880, height: 1100,
+            alt: "Fahad speaking into a microphone in front of the MIT Hacking Medicine and Mount Sinai banners",
+            caption: "On stage, NYC",
+          },
+          {
+            src: "content/talks/mit-hacking-medicine-team.webp", width: 1100, height: 733,
+            alt: "Fahad with four others, all wearing event badges, in front of the MIT Hacking Medicine banners",
+            caption: "MIT Hacking Medicine, 2018",
+          },
+        ],
+      },
+      {
+        id: "regeneron-isef",
+        year: "2024",
+        place: "Los Angeles",
+        title: "Grand Award Judge, Regeneron ISEF",
+        role: "Volunteer judge · Behavioral and Social Sciences",
+        detail: "Served as a volunteer Grand Award Judge at Regeneron ISEF 2024, the International Science and Engineering Fair, in Los Angeles, assigned to the Behavioral and Social Sciences category.",
+        badge: "Judge",
+        photos: [
+          {
+            src: "content/talks/regeneron-isef-2024.webp", width: 605, height: 330,
+            alt: "Regeneron ISEF 2024, Los Angeles: a program of Society for Science",
+            caption: "Los Angeles, 2024",
+          },
+        ],
       },
     ],
   },
