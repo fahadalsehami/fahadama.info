@@ -1,6 +1,6 @@
 # Fahad Alsehami — personal site
 
-A personal website with no dependencies and no build step, designed after arunmommileti.com: every visit opens in **Starlight**, a night-sky view of the page. **Turn the lights on** to use the site in light or dark theme. Inside: About, Experience, Projects, Bookshelf, Interests and Play Me, a crayon tennis game.
+A personal website with no dependencies and no build step, designed after arunmommileti.com: every visit opens in **Starlight**, a night-sky view of the page. **Turn the lights on** to use the site in light or dark theme. Inside: About, Experience, Projects, Talks & prizes, Bookshelf, Interests and Play Me, a crayon tennis game.
 
 ## Preview it
 
@@ -24,6 +24,7 @@ Every word, link and picture lives in **`content/site.js`**. Edit, save, refresh
 | About | `about` | The big statement, paragraphs, the facts table, and the particle emblem under it (`emblem.label` is the year on the laurel). |
 | Experience | `experience` | One row per role: `dates`, `title`, `org`, `orgUrl`, `place`, `detail`, and `logo: { src, alt }` for the square logo beside the dates (files in `content/logos/`, about 176 × 176). |
 | Projects | `projects.items` | `media: { image, alt, tone }` shows a screenshot from `content/projects/` in a window frame; `tone` sets the backdrop (`"sky"`, `"mint"`, `"lilac"`, `"blue"`, `"paper"`, `"rust"`). For work with no screenshot yet, `media` can be a drawn card instead: `"complex"` (a turning cell complex, used for CELLO), `"session"`, `"leaderboard"`, `"chart"`, `"globe"` or `"consensus"`. Each card has an anchor, so `#projects/cello` opens Projects at CELLO. |
+| Talks & prizes | `talks.items` | `{ id, year, place, title, role, detail, badge, photos }`. `photos` are `{ src, alt, caption, width, height }` from `content/talks/`: the first is pinned large like a polaroid, a second is pinned over its corner, and `badge` is the round sticker. `#talks/<id>` opens the section at that item (the About facts link to the MIT entry this way). |
 | Bookshelf | `books.items` | `{ title, author, note, color, accent }`, plus optional `ink` (spine text colour), `height` and `width` (about 0.75–1.15 and 0.7–1.4), `font: "serif"` for a serif spine, `spineTitle` / `spineAuthor` for shorter spine text, `reading: true` to show that book first, and `cover: "content/books/…"` for a real cover image. Long titles shrink and wrap onto two or three lines to fit the spine. |
 | Interests | `interests.items` | `figure` picks the 3D particle drawing: `"network"`, `"camera"`, `"tennis"`, `"mountain"`, `"bike"` or `"people"`. Add `photos: [{ src, caption }]` to pin polaroids next to it, and `project: "<project id>"` to link it to a Projects card (Explainers links to the explainers). |
 | Play Me | `play` | Tennis against you: move with the mouse, a finger or the arrow keys, serve with a click, a tap or the space bar. Hitting off the edge of the racket angles the ball, and too wide lands out. Four points, two clear, takes a game. Games and the longest rally are kept in the visitor's browser. |
@@ -54,7 +55,7 @@ The live site is [fahadama.info](https://fahadama.info). GitHub Pages serves it 
 | --- | --- |
 | `index.html` | Page structure. Picks theme and Starlight before first paint so nothing flashes. |
 | `content/site.js` | All content. |
-| `assets/js/site.js` | Builds the page from the content: tabs and links (`#about`, `#experience`, `#projects`, `#bookshelf`, `#interests`, `#interests/<id>`, `#play`), Starlight, theme, the portrait, contact, structured data. |
+| `assets/js/site.js` | Builds the page from the content: tabs and links (`#about`, `#experience`, `#projects`, `#projects/<id>`, `#talks`, `#talks/<id>`, `#bookshelf`, `#interests`, `#interests/<id>`, `#play`), Starlight, theme, the portrait, contact, structured data. |
 | `assets/js/particles.js` | The particle engine: 2D drawings (emblem, "Say hello", the Starlight portrait) and the 3D point clouds for the Interests. |
 | `assets/js/starfield.js` | The night sky behind Starlight. |
 | `assets/js/mini-ui.js` | The Projects card media: framed screenshots, plus optional animated cards. |
@@ -74,3 +75,4 @@ The live site is [fahadama.info](https://fahadama.info). GitHub Pages serves it 
 - Fonts under the SIL Open Font License: Newsreader (Production Type), Geist and Geist Mono (Vercel), Caveat (Impallari Type). Licenses are in `assets/fonts/`.
 - Logos: Medera's mark from medera.info, BOTIM's wordmark (on BOTIM blue) from botim.me, and Substack's app icon from substack.com, captured November 2026. They belong to their owners and are shown only to identify the companies.
 - Screenshots: medera.info, the BH-ASR leaderboard and its Two gates explainer on Hugging Face, botim.me and Signal & Symptom on Substack. The portrait comes from Signal & Symptom.
+- Talks & prizes: the MIT Hacking Medicine photos (New York, 2018) are Fahad's own. The Regeneron ISEF 2024 artwork belongs to Society for Science and is shown only to identify the event.
