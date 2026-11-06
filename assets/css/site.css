@@ -728,6 +728,137 @@ a.work-media:hover { transform: translateY(-3px); }
   color: var(--ink-3);
 }
 
+/* ---------- Talks & prizes ---------- */
+.talks {
+  margin: 52px 0 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--rule);
+}
+.talk {
+  display: grid;
+  grid-template-columns: minmax(0, 430px) minmax(0, 1fr);
+  align-items: center;
+  gap: 72px;
+  padding: 64px 0 72px;
+  border-top: 1px solid var(--rule);
+}
+.talk.is-flipped { grid-template-columns: minmax(0, 1fr) minmax(0, 430px); }
+.talk.is-flipped .talk-photos { order: 2; }
+.talk:focus { outline: none; }
+
+/* Photos pinned like polaroids: the first large, a second over its corner. */
+.talk-photos { position: relative; width: 100%; }
+.talk-photos.is-pair { aspect-ratio: 430 / 500; }
+.talk-photo {
+  position: relative;
+  margin: 0;
+  padding: 10px 10px 0;
+  background: #FBF9F4;
+  box-shadow: 0 22px 40px -22px rgba(40, 30, 20, 0.6), 0 2px 5px rgba(40, 30, 20, 0.14);
+  transform: rotate(var(--tilt, -2deg));
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.45s ease;
+}
+.talk-photo img { display: block; width: 100%; height: auto; }
+.talk-photo figcaption {
+  padding: 9px 4px 12px;
+  font-family: var(--hand);
+  font-size: 21px;
+  line-height: 1;
+  color: #3A3630;
+}
+.talk-photo::before { /* a strip of tape */
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  width: 86px;
+  height: 24px;
+  margin-left: -43px;
+  background: rgba(232, 221, 194, 0.78);
+  box-shadow: 0 1px 2px rgba(40, 30, 20, 0.12);
+  transform: rotate(-5deg);
+}
+.talk-photo:hover {
+  z-index: 3;
+  transform: rotate(0deg) translateY(-6px);
+  box-shadow: 0 30px 48px -24px rgba(40, 30, 20, 0.62), 0 2px 5px rgba(40, 30, 20, 0.14);
+}
+.talk-photos.is-pair .talk-photo { position: absolute; }
+.talk-photos.is-pair .is-main { left: 1%; top: 2%; width: 64%; --tilt: -3deg; z-index: 1; }
+.talk-photos.is-pair .is-main figcaption { text-align: left; }
+.talk-photos.is-pair .is-second { right: 0; bottom: 0; width: 60%; --tilt: 3.5deg; z-index: 2; }
+.talk-photos.is-pair .is-second::before { left: 30%; transform: rotate(4deg); }
+.talk-photos.is-single { padding: 14px 0 6px; }
+.talk-photos.is-single .talk-photo { width: 90%; margin: 0 auto; --tilt: 2deg; }
+.talk-photos.is-single figcaption { text-align: center; }
+
+/* the round sticker */
+.talk-badge {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FBF7EF;
+  box-shadow: 0 10px 20px -10px rgba(40, 20, 10, 0.55), inset 0 0 0 4px rgba(255, 255, 255, 0.16);
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+.talk-badge span {
+  max-width: 64px;
+  font-family: var(--mono);
+  font-size: 9.6px;
+  font-weight: 540;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-transform: uppercase;
+}
+.talk-badge b { font-family: var(--serif); font-size: 23px; font-weight: 400; line-height: 1; }
+.talk-photos.is-pair .talk-badge { top: -2%; left: calc(65% - 64px); }
+.talk-photos.is-single .talk-badge { top: -14px; right: 0; }
+
+.talk-eyebrow {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 10.88px;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+}
+.talk-title {
+  margin: 8px 0 0;
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 400;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+}
+.talk-role {
+  margin: 14px 0 0;
+  font-family: var(--mono);
+  font-size: 11.2px;
+  line-height: 1.6;
+  color: var(--ink-3);
+}
+.talk-detail {
+  max-width: 420px;
+  margin: 18px 0 0;
+  font-family: var(--sans);
+  font-size: 14.72px;
+  line-height: 1.62;
+  letter-spacing: -0.01em;
+  color: var(--ink-2);
+}
+.talk.is-flash .talk-title { animation: talk-flash 1.6s ease; }
+@keyframes talk-flash { 25% { color: var(--accent); } }
+
 /* ---------- Interests ---------- */
 .interests-rule { margin: 44px 0 0; border: 0; border-top: 1px solid var(--rule); }
 .interests-grid {
@@ -1520,6 +1651,9 @@ a.work-media:hover { transform: translateY(-3px); }
 /* ---------- Responsive ---------- */
 @media (max-width: 980px) {
   .about-grid { grid-template-columns: minmax(0, 1fr); gap: 56px; }
+  .talk, .talk.is-flipped { gap: 44px; }
+  .talk { grid-template-columns: minmax(0, 360px) minmax(0, 1fr); }
+  .talk.is-flipped { grid-template-columns: minmax(0, 1fr) minmax(0, 360px); }
   .facts-col { max-width: 420px; }
   .role { grid-template-columns: 196px minmax(0, 1fr); row-gap: 14px; }
   .role-detail { grid-column: 2; }
@@ -1554,6 +1688,14 @@ a.work-media:hover { transform: translateY(-3px); }
   .role-detail { grid-column: auto; }
   .role-title { font-size: 26px; }
   .work-grid { grid-template-columns: minmax(0, 1fr); gap: 44px; margin-top: 36px; }
+  .talks { margin-top: 36px; }
+  .talk, .talk.is-flipped { grid-template-columns: minmax(0, 1fr); gap: 40px; padding: 48px 0 56px; }
+  .talk.is-flipped .talk-photos { order: 0; }
+  .talk-photos { max-width: 400px; margin: 0 auto; }
+  .talk-photo figcaption { font-size: 18px; }
+  .talk-badge { width: 74px; height: 74px; }
+  .talk-badge b { font-size: 19px; }
+  .talk-title { font-size: 30px; }
   .mini { font-size: 90%; }
   .interest { width: 46%; }
   .interest canvas { width: 140px; height: 124px; }
