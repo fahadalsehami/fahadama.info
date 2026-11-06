@@ -279,6 +279,7 @@
   /* ---------------- sections ---------------- */
   var about = S.about || {};
   var projects = S.projects || {};
+  var talks = S.talks || {};
   var books = S.books || {};
   var interests = S.interests || {};
   var play = S.play || {};
@@ -380,6 +381,42 @@
       ul.appendChild(li);
     });
     panel.appendChild(ul);
+  }
+
+  /* Talks & prizes: each item pins its photos like polaroids beside the story.
+     The round sticker repeats the role in the copy, so it's hidden from screen readers. */
+  function buildTalks(panel) {
+    panel.appendChild(panelHead(talks.title, talks.note));
+    var ol = make("ol", "talks");
+    list(talks.items).forEach(function (t, i) {
+      var li = make("li", "talk" + (i % 2 ? " is-flipped" : ""));
+      if (t.id) li.id = "talk-" + t.id;
+      var photos = list(t.photos).filter(function (ph) { return ph && ph.src; }).slice(0, 2);
+      if (photos.length) {
+        var wall = make("div", "talk-photos " + (photos.length > 1 ? "is-pair" : "is-single"));
+        photos.forEach(function (ph, k) {
+          var size = ph.width && ph.height ? ' width="' + Number(ph.width) + '" height="' + Number(ph.height) + '"' : "";
+          wall.appendChild(make("figure", "talk-photo " + (k ? "is-second" : "is-main"),
+            '<img src="' + esc(ph.src) + '" alt="' + esc(ph.alt || "") + '"' + size + ' loading="lazy" decoding="async">' +
+            (ph.caption ? "<figcaption>" + text(ph.caption) + "</figcaption>" : "")));
+        });
+        if (t.badge) {
+          var badge = make("span", "talk-badge", "<span>" + text(t.badge) + "</span>" + (t.year ? "<b>" + text(t.year) + "</b>" : ""));
+          badge.setAttribute("aria-hidden", "true");
+          wall.appendChild(badge);
+        }
+        li.appendChild(wall);
+      }
+      var copy = make("div", "talk-copy");
+      var eyebrow = [t.year, t.place].filter(Boolean).map(text).join(" · ");
+      if (eyebrow) copy.appendChild(make("p", "talk-eyebrow", eyebrow));
+      copy.appendChild(make("h3", "talk-title", text(t.title)));
+      if (t.role) copy.appendChild(make("p", "talk-role", text(t.role)));
+      if (t.detail) copy.appendChild(make("p", "talk-detail", md(t.detail)));
+      li.appendChild(copy);
+      ol.appendChild(li);
+    });
+    panel.appendChild(ol);
   }
 
   function buildBooks(panel) {
@@ -506,22 +543,25 @@
     var hit = list(projects.items).filter(function (p) { return p.id === id; })[0];
     return hit ? hit.title : "";
   }
-  function showProject(id, smooth) {
-    var card = document.getElementById("project-" + id);
+  /* Scroll to a card someone linked to (#projects/<id>, #talks/<id>) and flash it. */
+  function showCard(card, smooth) {
     if (!card) return;
     requestAnimationFrame(function () {
       var top = card.getBoundingClientRect().top + window.pageYOffset - 24;
       window.scrollTo({ top: top, behavior: smooth && !reduce ? "smooth" : "auto" });
       card.classList.remove("is-flash"); void card.offsetWidth; card.classList.add("is-flash");
-      var link = card.querySelector(".work-title a");
-      if (link) link.focus({ preventScroll: true });
+      var target = card.querySelector(".work-title a");
+      if (!target) { target = card; card.setAttribute("tabindex", "-1"); }
+      target.focus({ preventScroll: true });
     });
   }
+  function showProject(id, smooth) { showCard(document.getElementById("project-" + id), smooth); }
 
   var SECTIONS = [
     { id: "about", label: "About", build: buildAbout, on: !!(about.statement || list(about.paragraphs).length) },
     { id: "experience", label: "Experience", build: buildExperience, on: list(S.experience).length > 0 },
     { id: "projects", label: "Projects", build: buildProjects, on: list(projects.items).length > 0 },
+    { id: "talks", label: talks.label || talks.title || "Talks", build: buildTalks, on: list(talks.items).length > 0 },
     { id: "bookshelf", label: "Bookshelf", build: buildBooks, on: list(books.items).length > 0 },
     { id: "interests", label: "Interests", build: buildInterests, on: list(interests.items).length > 0 },
     { id: "play", label: play.title || "Play Me", build: buildPlay, on: play !== false && play.show !== false },
@@ -597,11 +637,12 @@
       if (parts[1]) interestApi.show(parts[1]); else interestApi.close();
     }
     if (id === "projects" && parts[1]) showProject(parts[1], !fromLoad);
+    if (id === "talks" && parts[1]) showCard(document.getElementById("talk-" + parts[1]), !fromLoad);
     return true;
   }
   var deepLinked = route(true);
   window.addEventListener("hashchange", function () { route(false); });
-  if (deepLinked && !/^#projects\/./.test(location.hash)) {
+  if (deepLinked && !/^#(projects|talks)\/./.test(location.hash)) {
     requestAnimationFrame(function () {
       var t = tabsEl.getBoundingClientRect();
       window.scrollTo(0, Math.max(0, window.pageYOffset + t.top - 24));
