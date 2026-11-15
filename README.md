@@ -26,7 +26,7 @@ Every word, link and picture lives in **`content/site.js`**. Edit, save, refresh
 | Projects | `projects.items` | `media: { image, alt, tone }` shows a screenshot from `content/projects/` rising out of a coloured mat; `tone` picks the mat (`"sky"`, `"lilac"`, `"mint"`, `"blue"`, `"paper"`). For work with no screenshot yet, `media: "complex"` draws a turning cell complex instead (used for CELLO). `#projects/<id>` opens the page at that project. |
 | Talks & prizes | `talks.items` | `{ id, year, place, title, role, detail, badge, photos }`. `photos` are `{ src, alt, caption, width, height }` from `content/talks/`: the first is shown large and a second overlaps its corner; `badge` is the pill on the first photo. `#talks/<id>` opens the page at that item (the About facts link to the MIT entry this way). |
 | Bookshelf | `books.items` | `{ title, author, note, color, accent }`, plus optional `ink` (spine text colour), `height` and `width` (about 0.75–1.15 and 0.7–1.4), `font: "serif"` for a serif spine, `spineTitle` / `spineAuthor` for shorter spine text, `reading: true` to show that book first, and `cover: "content/books/…"` for a real cover image. Long titles shrink and wrap onto two or three lines to fit the spine. |
-| Interests | `interests.items` | `figure` picks the line drawing: `"network"`, `"camera"`, `"tennis"`, `"mountain"`, `"bike"` or `"people"`. Add `photos: [{ src, caption }]` to show small photos under the text, and `project: "<project id>"` to link the tile to a project (Explainers links to the explainers). `#interests/<id>` opens the page at that tile. |
+| Interests | `interests.items` | `figure` picks the 3D figure made of points: `"network"` (a social graph), `"camera"` (a camera on a tripod), `"tennis"` (a racket and ball), `"mountain"` (peaks with a trail and flag), `"bike"` (a road bike) or `"people"` (two people talking). Each figure assembles as it scrolls into view and turns toward the pointer. Add `photos: [{ src, caption }]` to show small photos under the text, and `project: "<project id>"` to link the tile to a project (Explainers links to the explainers). `#interests/<id>` opens the page at that tile. |
 | Play Me | `play` | Tennis on a sky court: move with the mouse, a finger or the arrow keys, serve with a click, a tap or the space bar. Hitting off the edge of the racket angles the ball, and too wide lands out. Four points, two clear, takes a game. Games and the longest rally are kept in the visitor's browser. |
 | Contact | `contact.items` | `{ label, value, url }`. Add `copy: true` to show a Copy button (useful for email). |
 
@@ -65,6 +65,7 @@ The live site is [fahadama.info](https://fahadama.info). GitHub Pages serves it 
 | `assets/js/site.js` | Builds the page from the content, and runs the menu, theme, scroll position on the thread, deep links (`#about`, `#experience`, `#projects`, `#projects/<id>`, `#talks`, `#talks/<id>`, `#bookshelf`, `#interests`, `#interests/<id>`, `#play`, `#contact`), contact buttons and structured data. |
 | `assets/js/signals.js` | The hero: five signals fusing into the thread. Pointing flares them; a click or tap sends a pulse of light along them and down the page. |
 | `assets/js/complex.js` | CELLO's picture: a slowly turning cell complex of nodes, edges and filled cells. |
+| `assets/js/figures.js` | The Interests figures: six small 3D sculptures made of points, shaded by depth, with glowing accents. |
 | `assets/js/bookshelf.js` | The 3D bookshelf on its glass shelf. |
 | `assets/js/play.js` | Play Me: tennis against the site. |
 | `assets/css/site.css` | Tokens, layout and every component, for light and dark. |
@@ -74,7 +75,7 @@ The live site is [fahadama.info](https://fahadama.info). GitHub Pages serves it 
 
 - **Theme:** follows the device setting until a visitor picks one with the moon or sun button; the choice is remembered in that browser.
 - **The thread:** a soft light on it marks how far down the page you are, and the chapter you're reading lights its node.
-- **Accessibility:** keyboard reachable throughout (arrow keys move between books and move your racket in Play Me; Escape closes an open book or the menu), visible focus, screen-reader labels and announcements. With reduced motion on, the signals hold still, the pulse and the drawing animations are off, and the game still plays.
+- **Accessibility:** keyboard reachable throughout (arrow keys move between books and move your racket in Play Me; Escape closes an open book or the menu), visible focus, screen-reader labels and announcements. With reduced motion on, the signals and the Interests figures hold still, the pulse is off, and the game still plays.
 
 ## Credits
 
