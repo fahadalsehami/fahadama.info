@@ -772,24 +772,33 @@ h1, h2, h3, p, ul, ol, dl, dd, figure { margin: 0; }
   list-style: none;
 }
 .interest { scroll-margin-top: 96px; }
-.interest-glyph {
-  display: grid;
-  place-items: center;
-  aspect-ratio: 2 / 1.12;
+.interest-figure {
+  /* the points: deep blue ink with lit blue accents */
+  --fig-ink: #0C2033;
+  --fig-accent: #2B7BC6;
+  --fig-glow: rgba(43, 123, 198, 0.3);
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
   border-radius: 22px;
-  background: var(--mat);
+  background:
+    radial-gradient(58% 52% at 50% 48%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 72%),
+    var(--mat);
+  box-shadow: inset 0 0 0 1px rgba(12, 32, 51, 0.04);
+  transition: box-shadow 0.4s ease;
 }
-.interest-glyph svg { width: 78%; height: auto; overflow: visible; }
-.interest-glyph path { fill: none; stroke: var(--sig-strong); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.interest-glyph circle { fill: var(--paper); stroke: var(--sig-strong); stroke-width: 2; }
-.interest-glyph .g-hub { fill: var(--tide); stroke: var(--tide); }
-[data-theme="dark"] .interest-glyph .g-hub { fill: var(--sky); stroke: var(--sky); }
-.interest-glyph path.g-hub { fill: var(--tide); }
-.interest-glyph .g-ground { stroke: var(--sig-ink); stroke-width: 1.4; stroke-dasharray: 2 7; }
-.interest.is-drawing .interest-glyph path:not(.g-ground) { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.3s var(--ease) forwards; }
-.interest.is-drawing .interest-glyph circle { animation: pop 0.5s var(--ease) both; animation-delay: 0.55s; transform-box: fill-box; transform-origin: center; }
-@keyframes draw { to { stroke-dashoffset: 0; } }
-@keyframes pop { from { transform: scale(0); } }
+[data-theme="dark"] .interest-figure {
+  --fig-ink: #D7EAFB;
+  --fig-accent: #7CC0F6;
+  --fig-glow: rgba(124, 192, 246, 0.42);
+  background:
+    radial-gradient(58% 52% at 50% 48%, rgba(210, 236, 255, 0.09) 0%, rgba(210, 236, 255, 0) 72%),
+    var(--mat);
+  box-shadow: inset 0 0 0 1px rgba(210, 236, 255, 0.06);
+}
+.interest:hover .interest-figure { box-shadow: inset 0 0 0 1px rgba(29, 92, 147, 0.18), 0 18px 40px -26px rgba(12, 32, 51, 0.45); }
+[data-theme="dark"] .interest:hover .interest-figure { box-shadow: inset 0 0 0 1px rgba(210, 236, 255, 0.16), 0 18px 44px -24px rgba(0, 0, 0, 0.8); }
+.interest-canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
 .interest-title { margin-top: 20px; font-size: 23px; font-weight: 450; letter-spacing: -0.02em; }
 .interest-text { margin-top: 8px; font-size: 16px; line-height: 1.58; color: var(--ink-2); }
 .interest-link { display: inline-block; margin-top: 12px; font-size: 15px; }
@@ -1023,8 +1032,7 @@ a.contact-value:hover { text-decoration: underline; text-decoration-color: var(-
 }
 @media (max-width: 520px) {
   .interests { grid-template-columns: minmax(0, 1fr); }
-  .interest-glyph { aspect-ratio: 2.5 / 1; }
-  .interest-glyph svg { width: 64%; }
+  .interest-figure { aspect-ratio: 3 / 2; }
   .hero-hint { left: calc(var(--gutter) + var(--indent)); right: auto; }
   .wordmark { font-size: 15px; }
 }
