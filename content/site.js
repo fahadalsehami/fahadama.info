@@ -375,7 +375,7 @@ window.SITE = {
   },
 
   /* ---------------- Interests ----------------
-     figure picks the line drawing: network, camera, tennis, mountain, bike or people.
+     figure picks the 3D figure made of points: network, camera, tennis, mountain, bike or people.
      project links the tile to a project by its id. Link to a tile with #interests/<id>. */
   interests: {
     title: "Interests",
