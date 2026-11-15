@@ -1,6 +1,6 @@
 /* ==========================================================================
-   Bookshelf — books standing on a shelf under a night sky. Each book is a
-   small 3D box: the spine faces you, the cover is its right-hand side.
+   Bookshelf: books standing on a glass shelf. Each book is a small 3D
+   box: the spine faces you, the cover is its right-hand side.
    Hover (or focus) lifts a book and names it below the shelf; selecting a
    book turns it to show the cover and the note. Drag sideways to browse
    when the shelf is wider than the screen.
@@ -59,27 +59,6 @@
 
   var PALETTE = [["#2F4A8A", "#E8B04B"], ["#B4532E", "#F1E3C8"], ["#1F5B4F", "#E9C46A"], ["#E7D9B8", "#B4532E"], ["#20201E", "#E8DCC2"], ["#8DA7C9", "#2B3A55"], ["#6B2E3A", "#E7C9A0"]];
 
-  function starfield(canvas) {
-    var ctx = canvas.getContext("2d");
-    function paint() {
-      var w = canvas.clientWidth, h = canvas.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
-      if (!w || !h) return;
-      canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.clearRect(0, 0, w, h);
-      var seed = 9, n = Math.round(w * h / 2400);
-      function r() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
-      for (var i = 0; i < n; i++) {
-        var a = 0.15 + r() * 0.55, s = r() < 0.08 ? 1.6 : 0.9;
-        ctx.fillStyle = "rgba(236,232,255," + a.toFixed(2) + ")";
-        ctx.fillRect(r() * w, r() * h * 0.82, s, s);
-      }
-    }
-    paint();
-    if ("ResizeObserver" in window) new ResizeObserver(paint).observe(canvas);
-    return paint;
-  }
-
   function mount(root, books) {
     books = (books || []).filter(function (b) { return b && b.title; });
     if (!books.length) return null;
@@ -87,7 +66,6 @@
     var stage = document.createElement("div");
     stage.className = "shelf-stage";
     stage.innerHTML =
-      '<canvas class="shelf-stars" aria-hidden="true"></canvas>' +
       // The plank sits outside the scroller: Chrome stops drawing a wide 3D layer
       // past the first screen of a scrolled scene, and the plank looks the same everywhere.
       '<div class="shelf-floor" aria-hidden="true"><span class="shelf-plank"><span class="plank-top"></span><span class="plank-front"></span></span></div>' +
@@ -99,7 +77,6 @@
     var track = stage.querySelector(".shelf-track");
     var cap = stage.querySelector(".shelf-caption");
     var capTitle = cap.querySelector("h3"), capBy = cap.querySelector(".by"), capNote = cap.querySelector(".note");
-    starfield(stage.querySelector(".shelf-stars"));
 
     var els = books.map(function (b, i) {
       var pal = PALETTE[i % PALETTE.length];

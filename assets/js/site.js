@@ -1,6 +1,7 @@
 /* ==========================================================================
-   Builds the page from content/site.js and runs everything that moves:
-   tabs, starlight, theme, the portrait, particles and the contact list.
+   Builds the page from content/site.js and runs what moves: the hero
+   signals, the thread down the page, the nav, the theme, deep links, and
+   the Bookshelf and Play Me sections when they come near.
    ========================================================================== */
 (function () {
   "use strict";
@@ -9,7 +10,6 @@
   var root = document.documentElement;
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var finePointer = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  var P = window.Particles;
 
   /* ---------------- helpers ---------------- */
   function $(sel, el) { return (el || document).querySelector(sel); }
@@ -17,9 +17,9 @@
   /* Typographic apostrophes and quotes: I'm -> I’m, "word" -> “word”. */
   function typo(s) {
     return String(s == null ? "" : s)
-      .replace(/(\w)'(\w)/g, "$1\u2019$2")
-      .replace(/(^|[\s(\[])'/g, "$1\u2018").replace(/'/g, "\u2019")
-      .replace(/(^|[\s(\[])"/g, "$1\u201C").replace(/"/g, "\u201D");
+      .replace(/(\w)'(\w)/g, "$1’$2")
+      .replace(/(^|[\s(\[])'/g, "$1‘").replace(/'/g, "’")
+      .replace(/(^|[\s(\[])"/g, "$1“").replace(/"/g, "”");
   }
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -55,6 +55,12 @@
     return n;
   }
   function list(v) { return Array.isArray(v) ? v : []; }
+  var OUT = '<svg class="out" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 8.5 8.5 3.5M4.5 3.5h4v4"/></svg>';
+  var NEWTAB = '<span class="sr-only"> (opens in a new tab)</span>';
+  /* Link text with the outward arrow tied to its last word, so the arrow never wraps alone. */
+  function outText(s) {
+    return text(s).replace(/(\S+)$/, '<span class="nobr">$1' + OUT + "</span>");
+  }
 
   var status = $(".sr-status");
   function announce(msg) {
@@ -63,247 +69,63 @@
     setTimeout(function () { status.textContent = msg; }, 60);
   }
 
-  var fontsReady = (function () {
-    var p = null;
-    return function () {
-      if (p) return p;
-      if (document.fonts && document.fonts.load) {
-        p = Promise.race([
-          Promise.all([document.fonts.load('400 48px "Newsreader"'), document.fonts.load('400 16px "Geist Mono"')]),
-          new Promise(function (r) { setTimeout(r, 2500); }),
-        ]).catch(function () {});
-      } else p = Promise.resolve();
-      return p;
-    };
-  })();
-
-  /* ---------------- text bindings ---------------- */
   var person = S.person || {};
   var hero = S.hero || {};
-  var contact = S.contact || {};
-  function bind(name, value) {
-    if (value == null) return;
-    $$('[data-bind="' + name + '"]').forEach(function (el) { el.textContent = typo(value); });
-  }
-  bind("greeting", hero.greeting);
-  bind("intro", hero.intro);
-  bind("contactTitle", contact.title);
-  bind("contactNote", contact.note);
-  bind("name", person.name);
-  bind("location", person.location);
-  if (S.meta && S.meta.title) document.title = S.meta.title;
-  if (S.meta && S.meta.description) {
-    var md1 = $('meta[name="description"]');
-    if (md1) md1.setAttribute("content", S.meta.description);
-  }
-
-  /* ---------------- theme and starlight ---------------- */
-  var main = $("#main"), foot = $(".foot");
-  var star = $(".control-star"), themeBtn = $(".control-theme"), controls = $(".controls");
-  var portraitBtn = $(".portrait"), portraitImg = $(".portrait-img"), portraitCanvas = $(".portrait-particles");
-  var pool = $(".light-pool"), sky = $(".starfield");
-  var metaTheme = $('meta[name="theme-color"]');
-
-  function mode() { return root.getAttribute("data-mode") === "starlight" ? "starlight" : "lit"; }
-  function theme() { return root.getAttribute("data-theme") === "dark" ? "dark" : "light"; }
-
-  function paintChrome() {
-    var c = mode() === "starlight" ? "#050508" : theme() === "dark" ? "#181714" : "#EEEAE0";
-    if (metaTheme) metaTheme.setAttribute("content", c);
-    var who = person.name || "the author";
-    if (mode() === "starlight") {
-      star.setAttribute("aria-label", "Turn the lights on and show the site");
-      star.setAttribute("title", "Turn the lights on");
-      portraitBtn.setAttribute("aria-label", "Portrait of " + who + ". Turn the lights on.");
-    } else {
-      star.setAttribute("aria-label", "Back to starlight");
-      star.setAttribute("title", "Starlight");
-      portraitBtn.setAttribute("aria-label", "Portrait of " + who + ". Switch to " + (theme() === "dark" ? "light" : "dark") + " theme.");
-    }
-    themeBtn.setAttribute("aria-label", theme() === "dark" ? "Switch to light theme" : "Switch to dark theme");
-    themeBtn.setAttribute("title", theme() === "dark" ? "Light theme" : "Dark theme");
-    themeBtn.disabled = mode() === "starlight";
-  }
-  function changed() {
-    paintChrome();
-    var ev;
-    try { ev = new CustomEvent("site:theme"); } catch (e) { ev = document.createEvent("Event"); ev.initEvent("site:theme", false, false); }
-    document.dispatchEvent(ev);
-  }
-
-  function setTheme(t, remember) {
-    root.setAttribute("data-theme", t);
-    if (remember) { try { localStorage.setItem("theme", t); } catch (e) {} }
-    changed();
-  }
-  if (window.matchMedia) {
-    var mq = window.matchMedia("(prefers-color-scheme: dark)");
-    var follow = function (e) {
-      var saved = null;
-      try { saved = localStorage.getItem("theme"); } catch (er) {}
-      if (saved !== "light" && saved !== "dark") setTheme(e.matches ? "dark" : "light", false);
-    };
-    if (mq.addEventListener) mq.addEventListener("change", follow); else if (mq.addListener) mq.addListener(follow);
-  }
-
-  /* Grain: a small noise tile used as a mask, so text in starlight looks made of stardust. */
-  (function grain() {
-    try {
-      var n = 180, c = document.createElement("canvas");
-      c.width = c.height = n;
-      var x = c.getContext("2d"), img = x.createImageData(n, n), d = img.data, seed = 1234567;
-      for (var i = 0; i < n * n; i++) {
-        seed = (seed * 16807) % 2147483647;
-        var v = seed / 2147483647, a;
-        if (v < 0.52) a = 255;
-        else if (v < 0.8) a = 150 + ((v - 0.52) / 0.28) * 90;
-        else a = ((v - 0.8) / 0.2) * 120;
-        d[i * 4 + 3] = a | 0;
-      }
-      x.putImageData(img, 0, 0);
-      root.style.setProperty("--grain", "url(" + c.toDataURL("image/png") + ")");
-    } catch (e) {}
-  })();
-
-  /* Starlight portrait: the cut-out photo rebuilt from coloured particles. */
-  var portraitPts = null, portraitField = null;
-  function portraitParticles(on) {
-    if (!on) {
-      if (portraitField) { portraitField.destroy(); portraitField = null; }
-      return;
-    }
-    if (portraitField || !P || !portraitCanvas) return;
-    var go = function () {
-      if (portraitField || mode() !== "starlight") return;
-      if (!portraitPts) {
-        try {
-          var n = 220, c = document.createElement("canvas");
-          c.width = c.height = n;
-          var x = c.getContext("2d");
-          x.beginPath(); x.arc(n / 2, n / 2, n / 2, 0, Math.PI * 2); x.clip();
-          x.drawImage(portraitImg, n * 0.04, n * 0.01, n * 0.92, n * 1.02);
-          portraitPts = P.sampleImage(c, n, n, 5200, 21);
-        } catch (e) { portraitPts = []; }
-      }
-      if (!portraitPts.length) { root.classList.add("portrait-plain"); return; }
-      portraitField = P.Field(portraitCanvas, portraitPts, {
-        keepColor: true, brighten: 1.18, lift: 78, dot: 1.4, drift: 0.3, turn: 0.12, depth: 10, pad: 8, twinkle: true, converge: true, convergeMs: 1700,
-      });
-    };
-    if (portraitImg.complete && portraitImg.naturalWidth) go();
-    else portraitImg.addEventListener("load", go, { once: true });
-  }
-
-  var hintTimer = 0, skyTimer = 0;
-  function setMode(next, quiet) {
-    root.setAttribute("data-mode", next);
-    try { sessionStorage.setItem("lights", next === "lit" ? "on" : "off"); } catch (e) {}
-    var night = next === "starlight";
-    [main, foot].forEach(function (el) { if (night) el.setAttribute("inert", ""); else el.removeAttribute("inert"); });
-    clearTimeout(skyTimer);
-    if (night) {
-      if (window.Starfield) window.Starfield.start(sky);
-      portraitParticles(true);
-      controls.classList.remove("is-hinting");
-    } else {
-      skyTimer = setTimeout(function () { if (mode() === "lit" && window.Starfield) window.Starfield.stop(); }, 1000);
-      portraitParticles(false);
-      pool.classList.remove("is-on");
-      if (!quiet) {
-        controls.classList.add("is-hinting");
-        clearTimeout(hintTimer);
-        hintTimer = setTimeout(function () { controls.classList.remove("is-hinting"); }, 3600);
-      }
-    }
-    changed();
-    if (!quiet) announce(night ? "Starlight. Turn the lights on to use the site." : "Lights on.");
-  }
-
-  star.addEventListener("click", function () { setMode(mode() === "starlight" ? "lit" : "starlight"); });
-  themeBtn.addEventListener("click", function () { if (mode() === "lit") setTheme(theme() === "dark" ? "light" : "dark", true); });
-  portraitBtn.addEventListener("click", function () {
-    if (mode() === "starlight") setMode("lit");
-    else setTheme(theme() === "dark" ? "light" : "dark", true);
-  });
-
-  /* A pool of light wherever you click in starlight. */
-  document.addEventListener("click", function (e) {
-    if (mode() !== "starlight" || e.target.closest(".controls, .portrait, .skip-link")) return;
-    pool.style.setProperty("--lx", e.clientX + "px");
-    pool.style.setProperty("--ly", e.clientY + "px");
-    pool.classList.add("is-on");
-  });
-  window.addEventListener("scroll", function () { if (pool.classList.contains("is-on") && mode() === "starlight") pool.classList.remove("is-on"); }, { passive: true });
-
-  /* Portrait follows the pointer: nine photos if you add them, a gentle tilt otherwise. */
-  (function lookAround() {
-    var poses = (person.portrait && person.portrait.poses) || {};
-    var keys = Object.keys(poses).filter(function (k) { return poses[k]; });
-    var base = portraitImg.getAttribute("src");
-    if (person.portrait && person.portrait.src) { portraitImg.setAttribute("src", person.portrait.src); base = person.portrait.src; }
-    keys.forEach(function (k) { var im = new Image(); im.src = poses[k]; });
-    if (!finePointer || reduce) return;
-    var raf = 0, px = 0, py = 0, current = "center";
-    function apply() {
-      raf = 0;
-      if (mode() !== "lit") return;
-      var r = portraitBtn.getBoundingClientRect();
-      var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-      var dx = px - cx, dy = py - cy, dist = Math.sqrt(dx * dx + dy * dy);
-      if (keys.length) {
-        var key = "center";
-        if (dist > 70) {
-          var h = dx > Math.abs(dy) * 0.45 ? "Right" : dx < -Math.abs(dy) * 0.45 ? "Left" : "";
-          var v = dy < -Math.abs(dx) * 0.45 ? "up" : dy > Math.abs(dx) * 0.45 ? "down" : "";
-          key = v ? v + h : (h ? h.toLowerCase() : "center");
-        }
-        if (key !== current) {
-          current = key;
-          portraitImg.setAttribute("src", poses[key] || poses.center || base);
-        }
-        return;
-      }
-      var k = Math.min(1, dist / 600), nx = dist ? dx / dist : 0, ny = dist ? dy / dist : 0;
-      portraitImg.style.setProperty("--turn-y", (nx * k * 13).toFixed(2) + "deg");
-      portraitImg.style.setProperty("--turn-x", (-ny * k * 9).toFixed(2) + "deg");
-      portraitImg.style.setProperty("--shift-x", (nx * k * 4).toFixed(2) + "px");
-      portraitImg.style.setProperty("--shift-y", (ny * k * 3).toFixed(2) + "px");
-    }
-    window.addEventListener("pointermove", function (e) {
-      if (e.pointerType && e.pointerType !== "mouse" && e.pointerType !== "pen") return;
-      px = e.clientX; py = e.clientY;
-      if (!raf) raf = requestAnimationFrame(apply);
-    }, { passive: true });
-  })();
-
-  /* ---------------- sections ---------------- */
   var about = S.about || {};
   var projects = S.projects || {};
   var talks = S.talks || {};
   var books = S.books || {};
   var interests = S.interests || {};
   var play = S.play || {};
+  var contact = S.contact || {};
 
-  function panelHead(title, note, cls) {
-    var head = make("div", "panel-head" + (cls ? " " + cls : ""));
-    if (title) head.appendChild(make("h2", "panel-title", text(title)));
-    if (note) head.appendChild(make("p", "panel-note", md(note)));
-    return head;
+  /* ---------------- chapter heads ---------------- */
+  function head(section, id, title, note) {
+    var h = make("header", "chapter-head");
+    h.appendChild(make("span", "node", ""));
+    h.lastChild.setAttribute("aria-hidden", "true");
+    var h2 = make("h2", "chapter-title", text(title));
+    h2.id = id + "-title";
+    h.appendChild(h2);
+    if (note) h.appendChild(make("p", "chapter-note", md(note)));
+    section.appendChild(h);
   }
 
-  function buildAbout(panel) {
-    if (about.lead || about.statement) {
-      var h = make("h2", "statement");
-      if (about.lead) h.appendChild(make("span", "", text(about.lead)));
-      if (about.statement) h.appendChild(make("span", "", text(about.statement)));
-      panel.appendChild(h);
+  /* ---------------- hero ---------------- */
+  if (person.name) {
+    // One word per line: the name is set large, so the break is chosen, not left to the window width.
+    $('[data-slot="name"]').innerHTML = String(person.name).split(/\s+/).map(function (w) { return '<span class="w">' + esc(w) + "</span>"; }).join(" ");
+    $('[data-slot="wordmark"]').textContent = person.name;
+  }
+  if (hero.intro) $('[data-slot="intro"]').innerHTML = md(hero.intro);
+  var heroEl = $(".hero");
+  var hint = $('[data-slot="hint"]');
+  if (hint && !reduce) hint.textContent = finePointer ? "Point at the signals. Click to send a pulse." : "Tap the signals to send a pulse.";
+
+  /* ---------------- about ---------------- */
+  (function () {
+    var sec = $('[data-slot="about"]');
+    head(sec, "about", "About");
+    var grid = make("div", "about");
+    var main = make("div", "about-main");
+    if (about.statement) {
+      main.appendChild(make("p", "about-statement",
+        (about.lead ? '<span class="about-lead">' + text(about.lead) + "</span> " : "") + text(about.statement)));
     }
-    var grid = make("div", "about-grid");
-    var copy = make("div", "about-copy");
-    list(about.paragraphs).forEach(function (p) { copy.appendChild(make("p", "", md(p))); });
-    grid.appendChild(copy);
-    var col = make("div", "facts-col");
+    var body = make("div", "about-body");
+    list(about.paragraphs).forEach(function (p) { body.appendChild(make("p", "", md(p))); });
+    main.appendChild(body);
+    grid.appendChild(main);
+
+    var side = make("aside", "about-side");
+    side.setAttribute("aria-label", "At a glance");
+    var pt = person.portrait || {};
+    if (pt.src) {
+      side.appendChild(make("figure", "portrait",
+        '<img src="' + esc(pt.src) + '" alt="' + esc(pt.alt || person.name || "") + '" width="560" height="560" decoding="async">'));
+    }
     var facts = list(about.facts);
+    if (person.location) facts = facts.concat([{ label: "Based in", value: person.location }]);
     if (facts.length) {
       var dl = make("dl", "facts");
       facts.forEach(function (f) {
@@ -312,421 +134,423 @@
         row.appendChild(make("dd", "", md(f.value)));
         dl.appendChild(row);
       });
-      col.appendChild(dl);
+      side.appendChild(dl);
     }
-    if (about.emblem && P) {
-      var cv = make("canvas", "emblem");
-      cv.setAttribute("aria-hidden", "true");
-      col.appendChild(cv);
-      fontsReady().then(function () {
-        var fig = P.figures[about.emblem.kind] || P.figures.laurel;
-        var pts = P.sampleDrawing(fig, 300, 300, 4200, P.hash("emblem" + (about.emblem.label || "")), about.emblem.label);
-        var f = P.Field(cv, pts, { dot: 1.0, turn: 0.28, depth: 12, drift: 0.3, pad: 2 });
-        cv.addEventListener("pointerenter", function () { f.setHover(true); });
-        cv.addEventListener("pointerleave", function () { f.setHover(false); });
-      });
-    }
-    grid.appendChild(col);
-    panel.appendChild(grid);
-  }
+    grid.appendChild(side);
+    sec.appendChild(grid);
+  })();
 
-  function buildExperience(panel) {
+  /* ---------------- work ---------------- */
+  (function () {
+    var sec = $('[data-slot="experience"]');
+    var items = list(S.experience);
+    if (!items.length) { sec.remove(); return; }
+    head(sec, "experience", "Work");
     var ol = make("ol", "roles");
-    list(S.experience).forEach(function (r) {
+    items.forEach(function (r) {
       var li = make("li", "role");
-      var when = make("div", "role-when");
-      if (r.logo && r.logo.src) {
-        var img = make("img", "role-logo");
-        img.src = r.logo.src;
-        img.alt = r.logo.alt || "";
-        img.width = 40; img.height = 40;
-        img.loading = "lazy"; img.decoding = "async";
-        when.appendChild(img);
-      }
-      when.appendChild(make("p", "role-dates", text(r.dates)));
-      li.appendChild(when);
-      var mid = make("div", "role-main");
-      mid.appendChild(make("h3", "role-title", text(r.title)));
-      var org = r.org ? (r.orgUrl ? "<a " + linkAttrs(r.orgUrl) + ">" + text(r.org) + "</a>" : text(r.org)) : "";
-      var where = [org, text(r.place || "")].filter(Boolean).join(" · ");
-      if (where) mid.appendChild(make("p", "role-org", where));
-      li.appendChild(mid);
-      li.appendChild(make("p", "role-detail", md(r.detail)));
+      li.appendChild(make("p", "role-when", text(r.dates)));
+      var body = make("div", "role-body");
+      var logo = r.logo && r.logo.src ? '<img class="role-logo" src="' + esc(r.logo.src) + '" alt="" width="44" height="44" loading="lazy" decoding="async">' : "";
+      var org = r.org ? (r.orgUrl ? "<a " + linkAttrs(r.orgUrl) + ">" + outText(r.org) + (isExternal(r.orgUrl) ? NEWTAB : "") + "</a>" : text(r.org)) : "";
+      body.appendChild(make("h3", "role-title", logo + '<span class="role-name">' + text(r.title) + (org ? ", " + org : "") + "</span>"));
+      if (r.place) body.appendChild(make("p", "role-place", text(r.place)));
+      if (r.detail) body.appendChild(make("p", "role-detail", md(r.detail)));
+      li.appendChild(body);
       ol.appendChild(li);
     });
-    panel.appendChild(ol);
-  }
+    sec.appendChild(ol);
+  })();
 
-  function buildProjects(panel) {
-    panel.appendChild(panelHead(projects.title, projects.note));
-    var ul = make("ul", "work-grid");
-    list(projects.items).forEach(function (p) {
-      var li = make("li", "work");
+  /* ---------------- projects ---------------- */
+  var complexes = [];
+  (function () {
+    var sec = $('[data-slot="projects"]');
+    var items = list(projects.items);
+    if (!items.length) { sec.remove(); return; }
+    head(sec, "projects", projects.title || "Projects", projects.note);
+    var ol = make("ol", "works");
+    items.forEach(function (p) {
+      var m = p.media;
+      var tone = m && typeof m === "object" && m.tone ? " tone-" + m.tone : "";
+      var li = make("li", "work" + tone);
       if (p.id) li.id = "project-" + p.id;
       var url = safeUrl(p.url);
-      var media = make(url ? "a" : "div", "work-media");
-      if (url) {
-        media.setAttribute("href", url);
-        if (isExternal(url)) { media.setAttribute("target", "_blank"); media.setAttribute("rel", "noopener"); }
-        media.setAttribute("tabindex", "-1");
-      }
-      media.setAttribute("aria-hidden", "true");
-      li.appendChild(media);
-      if (window.MiniUI && p.media) window.MiniUI.mount(media, p.media, p);
-      if (p.eyebrow) li.appendChild(make("p", "work-eyebrow", text(p.eyebrow)));
-      var title = url ? "<a " + linkAttrs(url) + ">" + text(p.title) + (isExternal(url) ? '<span class="visually-hidden"> (opens in a new tab)</span>' : "") + "</a>" : text(p.title);
-      li.appendChild(make("h3", "work-title", title));
-      if (p.detail) li.appendChild(make("p", "work-detail", md(p.detail)));
-      if (list(p.tags).length) li.appendChild(make("p", "work-tags", list(p.tags).map(esc).join(" · ")));
-      ul.appendChild(li);
-    });
-    panel.appendChild(ul);
-  }
 
-  /* Talks & prizes: each item pins its photos like polaroids beside the story.
-     The round sticker repeats the role in the copy, so it's hidden from screen readers. */
-  function buildTalks(panel) {
-    panel.appendChild(panelHead(talks.title, talks.note));
+      var media;
+      if (m && typeof m === "object" && m.image) {
+        media = make(url ? "a" : "div", "work-media",
+          '<img src="' + esc(m.image) + '" alt="' + esc(m.alt || "") + '" loading="lazy" decoding="async">');
+        if (url) {
+          media.setAttribute("href", url);
+          media.setAttribute("tabindex", "-1");
+          media.setAttribute("aria-hidden", "true");
+          if (isExternal(url)) { media.setAttribute("target", "_blank"); media.setAttribute("rel", "noopener"); }
+        }
+      } else if (m === "complex") {
+        media = make("div", "work-media is-drawn",
+          '<canvas class="complex-canvas" aria-hidden="true"></canvas>' +
+          '<p class="complex-key" aria-hidden="true"><span><i class="k-node"></i>nodes</span><span><i class="k-edge"></i>edges</span><span><i class="k-cell"></i>cells</span></p>');
+        media.setAttribute("role", "img");
+        media.setAttribute("aria-label", "A turning cell complex: nodes, edges and filled cells, the higher-order structure CELLO learns from");
+      }
+      if (media) li.appendChild(media);
+
+      var body = make("div", "work-text");
+      if (p.eyebrow) body.appendChild(make("p", "work-eyebrow", text(p.eyebrow)));
+      body.appendChild(make("h3", "work-title", url
+        ? "<a " + linkAttrs(url) + ">" + outText(p.title) + (isExternal(url) ? NEWTAB : "") + "</a>"
+        : text(p.title)));
+      if (p.detail) body.appendChild(make("p", "work-detail", md(p.detail)));
+      var tags = list(p.tags);
+      if (tags.length) {
+        var ul = make("ul", "tags");
+        ul.setAttribute("aria-label", "Topics");
+        tags.forEach(function (t) { ul.appendChild(make("li", "", text(t))); });
+        body.appendChild(ul);
+      }
+      li.appendChild(body);
+      ol.appendChild(li);
+    });
+    sec.appendChild(ol);
+    $$(".complex-canvas", sec).forEach(function (cv) {
+      if (window.Complex) complexes.push(window.Complex.mount(cv, { reduce: reduce }));
+    });
+  })();
+
+  /* ---------------- talks & prizes ---------------- */
+  (function () {
+    var sec = $('[data-slot="talks"]');
+    var items = list(talks.items);
+    if (!items.length) { sec.remove(); return; }
+    head(sec, "talks", talks.title || "Talks", talks.note);
     var ol = make("ol", "talks");
-    list(talks.items).forEach(function (t, i) {
+    items.forEach(function (t, i) {
       var li = make("li", "talk" + (i % 2 ? " is-flipped" : ""));
       if (t.id) li.id = "talk-" + t.id;
       var photos = list(t.photos).filter(function (ph) { return ph && ph.src; }).slice(0, 2);
       if (photos.length) {
         var wall = make("div", "talk-photos " + (photos.length > 1 ? "is-pair" : "is-single"));
         photos.forEach(function (ph, k) {
-          var size = ph.width && ph.height ? ' width="' + Number(ph.width) + '" height="' + Number(ph.height) + '"' : "";
+          var dims = ph.width && ph.height ? ' width="' + Number(ph.width) + '" height="' + Number(ph.height) + '"' : "";
           wall.appendChild(make("figure", "talk-photo " + (k ? "is-second" : "is-main"),
-            '<img src="' + esc(ph.src) + '" alt="' + esc(ph.alt || "") + '"' + size + ' loading="lazy" decoding="async">' +
+            '<img src="' + esc(ph.src) + '" alt="' + esc(ph.alt || "") + '"' + dims + ' loading="lazy" decoding="async">' +
             (ph.caption ? "<figcaption>" + text(ph.caption) + "</figcaption>" : "")));
         });
         if (t.badge) {
-          var badge = make("span", "talk-badge", "<span>" + text(t.badge) + "</span>" + (t.year ? "<b>" + text(t.year) + "</b>" : ""));
+          var badge = make("span", "talk-badge", text(t.badge));
           badge.setAttribute("aria-hidden", "true");
           wall.appendChild(badge);
         }
         li.appendChild(wall);
       }
-      var copy = make("div", "talk-copy");
-      var eyebrow = [t.year, t.place].filter(Boolean).map(text).join(" · ");
-      if (eyebrow) copy.appendChild(make("p", "talk-eyebrow", eyebrow));
-      copy.appendChild(make("h3", "talk-title", text(t.title)));
-      if (t.role) copy.appendChild(make("p", "talk-role", text(t.role)));
-      if (t.detail) copy.appendChild(make("p", "talk-detail", md(t.detail)));
-      li.appendChild(copy);
+      var body = make("div", "talk-text");
+      if (t.year) body.appendChild(make("p", "talk-year", text(t.year)));
+      body.appendChild(make("h3", "talk-title", text(t.title)));
+      if (t.place) body.appendChild(make("p", "talk-place", text(t.place)));
+      if (t.role) body.appendChild(make("p", "talk-role", text(t.role)));
+      if (t.detail) body.appendChild(make("p", "talk-detail", md(t.detail)));
+      li.appendChild(body);
       ol.appendChild(li);
     });
-    panel.appendChild(ol);
-  }
+    sec.appendChild(ol);
+  })();
 
-  function buildBooks(panel) {
-    if (books.title) panel.appendChild(make("h2", "shelf-title", text(books.title)));
-    if (books.hint) panel.appendChild(make("p", "shelf-hint", text(books.hint)));
-    if (window.Bookshelf) window.Bookshelf.mount(panel, list(books.items));
-  }
+  /* ---------------- bookshelf (mounted when near) ---------------- */
+  (function () {
+    var sec = $('[data-slot="bookshelf"]');
+    var items = list(books.items);
+    if (!items.length || !window.Bookshelf) { sec.remove(); return; }
+    head(sec, "bookshelf", "Bookshelf", books.title);
+    if (books.hint) sec.appendChild(make("p", "shelf-hint", text(books.hint)));
+    var slot = make("div", "shelf-slot");
+    sec.appendChild(slot);
+    whenNear(sec, function () { window.Bookshelf.mount(slot, items); });
+  })();
 
-  /* Interests: a grid of 3D particle figures; each opens into a larger view. */
-  function figure(canvas, it, count, large) {
-    var seed = P.hash((large ? "big" : "") + (it.id || it.label));
-    if (P.makeShape && P.shapes[it.figure]) {
-      var pts = P.makeShape(it.figure, count, seed);
-      return P.Cloud(canvas, pts, large
-        ? { dot: 1.3, swing: 0.55, converge: true, convergeMs: 1400 }
-        : { dot: 1.05 });
-    }
-    var fig = P.figures[it.figure] || P.figures.network;
-    return P.Field(canvas, P.sampleDrawing(fig, 400, 300, count, seed), { dot: large ? 1.4 : 1.1, turn: 0.4, depth: 22, drift: 0.5, pad: 4, converge: large });
-  }
-  var interestApi = null;
-  function buildInterests(panel) {
+  /* ---------------- interests ---------------- */
+  var GLYPHS = {
+    network: '<path d="M38 70 92 38M92 38 150 60M150 60 204 30M92 38 118 92M150 60 118 92M150 60 196 92M38 70 118 92"/><circle cx="38" cy="70" r="5"/><circle cx="92" cy="38" r="7"/><circle cx="150" cy="60" r="9" class="g-hub"/><circle cx="204" cy="30" r="5"/><circle cx="118" cy="92" r="6"/><circle cx="196" cy="92" r="5"/>',
+    camera: '<path d="M14 62h18l6-14 7 30 8-44 9 52 7-34 6 16 6-6h22"/><path d="M128 40v44l36-22z" class="g-hub"/><path d="M176 62h50"/>',
+    tennis: '<path d="M16 96C46 18 86 18 114 96M114 96C136 44 164 44 182 96"/><circle cx="202" cy="80" r="11" class="g-hub"/><path d="M193 73c5 4 5 10 0 14M211 73c-5 4-5 10 0 14"/><path d="M8 100h224" class="g-ground"/>',
+    mountain: '<path d="M8 100 46 64l16 12 34-46 22 26 18-14 40 58 16-14 40 14"/><path d="M96 30V10l18 6-18 6" class="g-hub"/><path d="M8 100h224" class="g-ground"/>',
+    bike: '<path d="M16 96C54 96 36 44 84 46s58 46 92 22 24-40 50-36"/><circle cx="16" cy="96" r="6"/><circle cx="226" cy="32" r="7" class="g-hub"/><path d="M60 102h16M100 102h16M140 102h16" class="g-ground"/>',
+    people: '<path d="M30 40 62 30 70 66 30 40M62 30 104 58M70 66 104 58M136 58 170 30 182 70 136 58M170 30 214 44 182 70M104 58h32"/><circle cx="30" cy="40" r="5"/><circle cx="62" cy="30" r="6"/><circle cx="70" cy="66" r="5"/><circle cx="104" cy="58" r="7" class="g-hub"/><circle cx="136" cy="58" r="7" class="g-hub"/><circle cx="170" cy="30" r="6"/><circle cx="182" cy="70" r="5"/><circle cx="214" cy="44" r="5"/>',
+  };
+  (function () {
+    var sec = $('[data-slot="interests"]');
     var items = list(interests.items);
-    panel.appendChild(panelHead(interests.title, interests.note));
-    panel.appendChild(make("hr", "interests-rule"));
-    var body = make("div", "interests-body");
-    var grid = make("ul", "interests-grid");
-    grid.style.maxWidth = (items.length <= 4 ? 2 : items.length <= 6 ? 3 : 4) * 192 + "px";
-    var detail = make("div", "interest-detail");
-    detail.hidden = true;
-    body.appendChild(grid);
-    body.appendChild(detail);
-    panel.appendChild(body);
-    panel.appendChild(make("hr", "interests-end"));
-
-    var buttons = [];
-    items.forEach(function (it, i) {
-      var li = make("li");
-      var b = make("button", "interest");
-      b.type = "button";
-      b.setAttribute("aria-label", it.label);
-      b.innerHTML = '<canvas aria-hidden="true"></canvas><span class="interest-label" aria-hidden="true">' + text(it.label) + "</span>";
-      li.appendChild(b);
-      grid.appendChild(li);
-      buttons.push(b);
-      if (P) {
-        var f = figure(b.querySelector("canvas"), it, 2700, false);
-        b.addEventListener("pointerenter", function () { f.setHover(true); });
-        b.addEventListener("pointerleave", function () { f.setHover(false); });
-        b.addEventListener("focus", function () { f.setHover(true); });
-        b.addEventListener("blur", function () { f.setHover(false); });
-      }
-      b.addEventListener("click", function () { open(i, true); });
-    });
-
-    var big = null, current = -1;
-    function open(i, user) {
-      var it = items[i];
-      if (!it) return;
-      current = i;
-      if (big) { big.destroy(); big = null; }
-      var photos = list(it.photos).map(function (ph, k) {
-        var tilt = [-4, 3, -2, 5][k % 4];
-        return '<figure class="polaroid" style="--tilt:' + tilt + 'deg"><img src="' + esc(ph.src) + '" alt="' + esc(ph.alt || ph.caption || "") + '" loading="lazy" decoding="async">' + (ph.caption ? "<figcaption>" + text(ph.caption) + "</figcaption>" : "") + "</figure>";
-      }).join("");
-      detail.innerHTML =
-        '<button type="button" class="interest-close" aria-label="Close ' + esc(it.label) + '"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2l8 8M10 2l-8 8"/></svg></button>' +
-        '<canvas aria-hidden="true"></canvas>' +
-        '<div class="interest-copy"><h3 tabindex="-1">' + text(it.label) + "</h3>" + (it.text ? "<p>" + md(it.text) + "</p>" : "") +
-        (it.project && projectTitle(it.project) ? '<a class="interest-link" href="#projects/' + esc(it.project) + '">' + text(projectTitle(it.project)) + ' in Projects <span aria-hidden="true">→</span></a>' : "") +
-        (photos ? '<div class="polaroids">' + photos + "</div>" : "") +
-        (items.length > 1 ? '<div class="interest-nav"><button type="button" data-step="-1">← ' + text(items[(i - 1 + items.length) % items.length].label) + '</button><button type="button" data-step="1">' + text(items[(i + 1) % items.length].label) + " →</button></div>" : "") +
-        "</div>";
-      grid.hidden = true;
-      detail.hidden = false;
-      if (P) big = figure($("canvas", detail), it, 7000, true);
-      $(".interest-close", detail).addEventListener("click", function () { close(true); });
-      $$(".interest-nav button", detail).forEach(function (nb) {
-        nb.addEventListener("click", function () {
-          var step = Number(nb.getAttribute("data-step"));
-          open((current + step + items.length) % items.length, true);
-          var again = $('.interest-nav button[data-step="' + step + '"]', detail);
-          if (again) again.focus({ preventScroll: true });
+    if (!items.length) { sec.remove(); return; }
+    head(sec, "interests", interests.title || "Interests", interests.note);
+    var ul = make("ul", "interests");
+    items.forEach(function (it) {
+      var li = make("li", "interest");
+      if (it.id) li.id = "interest-" + it.id;
+      var g = GLYPHS[it.figure] || GLYPHS.network;
+      var glyph = make("div", "interest-glyph", '<svg viewBox="0 0 240 120" aria-hidden="true" focusable="false">' + g + "</svg>");
+      // Normalised lengths let one stroke-dash animation draw every line, whatever its length.
+      $$("path:not(.g-ground)", glyph).forEach(function (pth) { pth.setAttribute("pathLength", "1"); });
+      li.appendChild(glyph);
+      li.appendChild(make("h3", "interest-title", text(it.label || it.title)));
+      if (it.text) li.appendChild(make("p", "interest-text", md(it.text)));
+      var ph = list(it.photos).filter(function (p) { return p && p.src; });
+      if (ph.length) {
+        var pl = make("ul", "interest-photos");
+        ph.forEach(function (p) {
+          pl.appendChild(make("li", "", '<img src="' + esc(p.src) + '" alt="' + esc(p.caption || "") + '" loading="lazy" decoding="async">'));
         });
-      });
-      if (user) {
-        setHash("interests/" + (it.id || i));
-        if (!document.activeElement || !detail.contains(document.activeElement)) $("h3", detail).focus({ preventScroll: true });
-        var top = panel.getBoundingClientRect().top;
-        if (top < 0) window.scrollBy({ top: top - 20, behavior: reduce ? "auto" : "smooth" });
+        li.appendChild(pl);
       }
-    }
-    function close(user) {
-      if (current < 0) return;
-      if (big) { big.destroy(); big = null; }
-      detail.hidden = true;
-      detail.innerHTML = "";
-      grid.hidden = false;
-      var was = current;
-      current = -1;
-      if (user) {
-        setHash("interests");
-        if (buttons[was]) buttons[was].focus({ preventScroll: true });
+      if (it.project) {
+        var target = list(projects.items).filter(function (p) { return p.id === it.project; })[0];
+        if (target) li.appendChild(make("a", "interest-link", "See " + text(target.title)));
+        if (target) li.lastChild.setAttribute("href", "#projects/" + it.project);
       }
-    }
-    detail.addEventListener("keydown", function (e) { if (e.key === "Escape") close(true); });
-
-    interestApi = {
-      show: function (id) {
-        var i = -1;
-        items.forEach(function (it, k) { if ((it.id || String(k)) === id) i = k; });
-        if (i >= 0) open(i, false); else close(false);
-      },
-      close: function () { close(false); },
-    };
-  }
-
-  function buildPlay(panel) {
-    panel.appendChild(panelHead(play.title || "Play Me", play.note));
-    if (window.PlayMe) window.PlayMe.mount(panel, { name: person.firstName || "me", announce: announce });
-  }
-
-  function projectTitle(id) {
-    var hit = list(projects.items).filter(function (p) { return p.id === id; })[0];
-    return hit ? hit.title : "";
-  }
-  /* Scroll to a card someone linked to (#projects/<id>, #talks/<id>) and flash it. */
-  function showCard(card, smooth) {
-    if (!card) return;
-    requestAnimationFrame(function () {
-      var top = card.getBoundingClientRect().top + window.pageYOffset - 24;
-      window.scrollTo({ top: top, behavior: smooth && !reduce ? "smooth" : "auto" });
-      card.classList.remove("is-flash"); void card.offsetWidth; card.classList.add("is-flash");
-      var target = card.querySelector(".work-title a");
-      if (!target) { target = card; card.setAttribute("tabindex", "-1"); }
-      target.focus({ preventScroll: true });
+      // Redraw the glyph when someone points at or focuses the tile.
+      li.addEventListener("pointerenter", function () { redraw(li); });
+      li.addEventListener("focusin", function () { redraw(li); });
+      ul.appendChild(li);
     });
-  }
-  function showProject(id, smooth) { showCard(document.getElementById("project-" + id), smooth); }
+    sec.appendChild(ul);
+    function redraw(li) {
+      if (reduce) return;
+      li.classList.remove("is-drawing"); void li.offsetWidth; li.classList.add("is-drawing");
+    }
+  })();
 
-  var SECTIONS = [
-    { id: "about", label: "About", build: buildAbout, on: !!(about.statement || list(about.paragraphs).length) },
-    { id: "experience", label: "Experience", build: buildExperience, on: list(S.experience).length > 0 },
-    { id: "projects", label: "Projects", build: buildProjects, on: list(projects.items).length > 0 },
-    { id: "talks", label: talks.label || talks.title || "Talks", build: buildTalks, on: list(talks.items).length > 0 },
-    { id: "bookshelf", label: "Bookshelf", build: buildBooks, on: list(books.items).length > 0 },
-    { id: "interests", label: "Interests", build: buildInterests, on: list(interests.items).length > 0 },
-    { id: "play", label: play.title || "Play Me", build: buildPlay, on: play !== false && play.show !== false },
-  ].filter(function (s) { return s.on; });
-
-  var tabsEl = $('[data-slot="tabs"]'), panelsEl = $('[data-slot="panels"]');
-  var tabs = {}, panels = {}, built = {}, active = null;
-
-  SECTIONS.forEach(function (s, i) {
-    var t = make("button", "tab", text(s.label));
-    t.type = "button";
-    t.id = "tab-" + s.id;
-    t.setAttribute("role", "tab");
-    t.setAttribute("aria-controls", "panel-" + s.id);
-    t.setAttribute("aria-selected", "false");
-    t.tabIndex = -1;
-    t.addEventListener("click", function () { select(s.id, { user: true }); });
-    t.addEventListener("keydown", function (e) {
-      var j = null;
-      if (e.key === "ArrowRight") j = (i + 1) % SECTIONS.length;
-      else if (e.key === "ArrowLeft") j = (i - 1 + SECTIONS.length) % SECTIONS.length;
-      else if (e.key === "Home") j = 0;
-      else if (e.key === "End") j = SECTIONS.length - 1;
-      if (j != null) { e.preventDefault(); select(SECTIONS[j].id, { user: true }); tabs[SECTIONS[j].id].focus(); }
+  /* ---------------- play (mounted when near) ---------------- */
+  (function () {
+    var sec = $('[data-slot="play"]');
+    if (!window.PlayMe || play.hidden) { sec.remove(); return; }
+    head(sec, "play", play.title || "Play Me", play.note);
+    var slot = make("div", "play-slot");
+    sec.appendChild(slot);
+    whenNear(sec, function () {
+      window.PlayMe.mount(slot, { name: person.firstName || "me", announce: announce });
     });
-    tabsEl.appendChild(t);
-    tabs[s.id] = t;
-    var p = make("section", "panel panel-" + s.id);
-    p.id = "panel-" + s.id;
-    p.setAttribute("role", "tabpanel");
-    p.setAttribute("aria-labelledby", "tab-" + s.id);
-    p.tabIndex = 0;
-    p.hidden = true;
-    panelsEl.appendChild(p);
-    panels[s.id] = p;
-  });
-
-  function setHash(h) {
-    try { history.replaceState(null, "", "#" + h); } catch (e) { location.hash = h; }
-  }
-
-  function select(id, opts) {
-    opts = opts || {};
-    if (!tabs[id]) id = SECTIONS[0] && SECTIONS[0].id;
-    if (!id) return;
-    var s = SECTIONS.filter(function (x) { return x.id === id; })[0];
-    if (!built[id]) { built[id] = true; s.build(panels[id]); }
-    if (active !== id) {
-      SECTIONS.forEach(function (x) {
-        var on = x.id === id;
-        tabs[x.id].setAttribute("aria-selected", on ? "true" : "false");
-        tabs[x.id].tabIndex = on ? 0 : -1;
-        panels[x.id].hidden = !on;
-      });
-      active = id;
-    }
-    if (opts.user) {
-      setHash(id);
-      if (id === "interests" && interestApi) interestApi.close();
-      // keep the start of the newly opened section in view
-      var t = tabsEl.getBoundingClientRect();
-      if (t.top < -2) window.scrollTo({ top: window.pageYOffset + t.top - 12, behavior: reduce ? "auto" : "smooth" });
-    }
-  }
-
-  function route(fromLoad) {
-    var h = decodeURIComponent((location.hash || "").replace(/^#/, ""));
-    var parts = h.split("/");
-    var id = parts[0];
-    if (!tabs[id]) { if (fromLoad) select(SECTIONS[0] && SECTIONS[0].id); return false; }
-    select(id);
-    if (id === "interests" && interestApi) {
-      if (parts[1]) interestApi.show(parts[1]); else interestApi.close();
-    }
-    if (id === "projects" && parts[1]) showProject(parts[1], !fromLoad);
-    if (id === "talks" && parts[1]) showCard(document.getElementById("talk-" + parts[1]), !fromLoad);
-    return true;
-  }
-  var deepLinked = route(true);
-  window.addEventListener("hashchange", function () { route(false); });
-  if (deepLinked && !/^#(projects|talks)\/./.test(location.hash)) {
-    requestAnimationFrame(function () {
-      var t = tabsEl.getBoundingClientRect();
-      window.scrollTo(0, Math.max(0, window.pageYOffset + t.top - 24));
-    });
-  }
+  })();
 
   /* ---------------- contact ---------------- */
-  (function buildContact() {
-    var ul = $('[data-slot="contact"]');
+  (function () {
+    var sec = $('[data-slot="contact"]');
+    head(sec, "contact", contact.title || "Say hello", contact.note);
     var items = list(contact.items);
-    if (!items.length) { ul.hidden = true; return; }
-    items.forEach(function (c, i) {
-      var li = make("li", "contact-item" + (i === 0 ? " is-primary" : ""));
-      var label = make("p", "contact-label", "<span>" + text(c.label) + "</span>");
-      if (c.copy) {
-        var b = make("button", "copy-btn", '<svg viewBox="0 0 12 12" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><path d="M8.5 2.6V2a.9.9 0 0 0-.9-.9H2a.9.9 0 0 0-.9.9v5.6c0 .5.4.9.9.9h.6"/></svg><span class="idle">Copy</span><span class="done">Copied</span>');
-        b.type = "button";
-        b.setAttribute("aria-label", "Copy " + c.label.toLowerCase());
-        b.addEventListener("click", function () {
-          var text = c.value || "";
-          var ok = function () {
-            b.classList.add("is-copied");
-            announce("Copied " + text);
-            setTimeout(function () { b.classList.remove("is-copied"); }, 1800);
-          };
-          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, fallback);
-          else fallback();
-          function fallback() {
-            var ta = document.createElement("textarea");
-            ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
-            document.body.appendChild(ta); ta.select();
-            try { document.execCommand("copy"); ok(); } catch (e) {}
-            document.body.removeChild(ta);
-          }
-        });
-        label.appendChild(b);
-      }
-      li.appendChild(label);
+    if (!items.length) return;
+    var ul = make("ul", "contacts");
+    items.forEach(function (c) {
+      var li = make("li", "contact");
+      li.appendChild(make("p", "contact-label", text(c.label)));
       var url = safeUrl(c.url);
-      var arrow = url && !/^(mailto|tel):/i.test(url) ? ' <span class="arrow" aria-hidden="true">↗</span>' : "";
-      var v = url ? make("a", "contact-value", esc(c.value) + arrow) : make("span", "contact-value", esc(c.value));
+      var v = url
+        ? make("a", "contact-value", (/^(mailto|tel):/i.test(url) ? text(c.value) : outText(c.value)) + (isExternal(url) ? NEWTAB : ""))
+        : make("span", "contact-value", text(c.value));
       if (url) {
         v.setAttribute("href", url);
         if (isExternal(url)) { v.setAttribute("target", "_blank"); v.setAttribute("rel", "noopener"); }
       }
       li.appendChild(v);
+      if (c.copy) {
+        var b = make("button", "copy-btn", '<span class="idle">Copy</span><span class="done">Copied</span>');
+        b.type = "button";
+        b.setAttribute("aria-label", "Copy " + String(c.label || "").toLowerCase());
+        b.addEventListener("click", function () {
+          var val = c.value || "";
+          var ok = function () {
+            b.classList.add("is-copied");
+            announce("Copied " + val);
+            setTimeout(function () { b.classList.remove("is-copied"); }, 1800);
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(val).then(ok, function () {});
+        });
+        li.appendChild(b);
+      }
       ul.appendChild(li);
     });
+    sec.appendChild(ul);
   })();
 
-  /* "Say hello" drawn in particles. */
-  (function hello() {
-    var cv = $(".hello-canvas");
-    if (!cv || !P) return;
-    fontsReady().then(function () {
-      var text = contact.title || "Say hello";
-      var w = 380, h = 144;
-      var pts = P.sampleDrawing(function (c) {
-        var size = 100;
-        c.font = "400 " + size + 'px "Newsreader", Georgia, serif';
-        var m = c.measureText(text).width;
-        if (m > w - 12) { size = Math.floor(size * (w - 12) / m); c.font = "400 " + size + 'px "Newsreader", Georgia, serif'; }
-        c.fillStyle = "#000";
-        c.textBaseline = "alphabetic";
-        c.fillText(text, 6, h * 0.72);
-      }, w, h, 2800, P.hash(text));
-      var f = P.Field(cv, pts, { dot: 1.05, drift: 0.3, turn: 0, pad: 0 });
-      var head = cv.parentNode.parentNode;
-      head.addEventListener("pointerenter", function () { f.setHover(true); });
-      head.addEventListener("pointerleave", function () { f.setHover(false); });
-    });
-  })();
+  $('[data-slot="year"]').textContent = String(new Date().getFullYear());
 
-  /* ---------------- footer ---------------- */
-  var topLink = $(".foot-top");
-  if (topLink) topLink.addEventListener("click", function (e) {
-    e.preventDefault();
-    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
-    var g = $("#greeting");
-    if (g) { g.setAttribute("tabindex", "-1"); g.focus({ preventScroll: true }); }
+  /* ---------------- nav ---------------- */
+  var NAV = [
+    ["about", "About"], ["experience", "Work"], ["projects", "Projects"], ["talks", "Talks"],
+    ["bookshelf", "Books"], ["interests", "Interests"], ["play", "Play"],
+  ];
+  var navList = $('[data-slot="nav"]');
+  var links = {};
+  NAV.forEach(function (n) {
+    if (!document.getElementById(n[0])) return;
+    var li = make("li", "", '<a href="#' + n[0] + '">' + n[1] + "</a>");
+    links[n[0]] = li.firstChild;
+    navList.appendChild(li);
   });
 
+  var bar = $("#bar");
+  var menuBtn = $(".menu-toggle");
+  function setMenu(open) {
+    root.classList.toggle("menu-open", open);
+    menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    if (open) { var first = $("a", navList); if (first) first.focus(); }
+  }
+  menuBtn.addEventListener("click", function () { setMenu(!root.classList.contains("menu-open")); });
+  navList.addEventListener("click", function (e) { if (e.target.closest("a")) setMenu(false); });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && root.classList.contains("menu-open")) { setMenu(false); menuBtn.focus(); }
+  });
+
+  // The bar turns solid once the hero has scrolled away.
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(function (es) { bar.classList.toggle("is-solid", !es[0].isIntersecting); }, { rootMargin: "-72px 0px 0px 0px" }).observe(heroEl);
+    // Scroll spy: the chapter crossing the middle of the screen is the current one.
+    var spy = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        Object.keys(links).forEach(function (k) { links[k].removeAttribute("aria-current"); });
+        if (links[e.target.id]) links[e.target.id].setAttribute("aria-current", "true");
+        $$(".chapter").forEach(function (c) { c.classList.toggle("is-current", c === e.target); });
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    $$(".chapter").forEach(function (c) { spy.observe(c); });
+  }
+
+  /* ---------------- theme ---------------- */
+  var toggle = $(".theme-toggle");
+  var signals = null;
+  function labelTheme() {
+    var dark = root.getAttribute("data-theme") === "dark";
+    toggle.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+  }
+  function setTheme(t, save) {
+    root.setAttribute("data-theme", t);
+    if (save) { try { localStorage.setItem("theme", t); } catch (e) {} }
+    labelTheme();
+    if (signals) signals.retheme();
+    complexes.forEach(function (c) { c.retheme(); });
+    document.dispatchEvent(new CustomEvent("themechange"));
+  }
+  toggle.addEventListener("click", function () {
+    var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    setTheme(next, true);
+    announce(next === "dark" ? "Dark theme" : "Light theme");
+  });
+  labelTheme();
+  if (window.matchMedia) {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    var follow = function (e) {
+      var saved = null;
+      try { saved = localStorage.getItem("theme"); } catch (er) {}
+      if (!saved) setTheme(e.matches ? "dark" : "light", false);
+    };
+    if (mq.addEventListener) mq.addEventListener("change", follow); else if (mq.addListener) mq.addListener(follow);
+  }
+
+  /* ---------------- the thread ---------------- */
+  var wrap = $(".story .wrap");
+  var thread = $(".thread");
+  function threadX() {
+    var r = wrap.getBoundingClientRect();
+    return r.left + parseFloat(getComputedStyle(wrap).paddingLeft || 0);
+  }
+  // How far down the page the reader is, shown as light along the thread.
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      ticking = false;
+      var r = thread.getBoundingClientRect();
+      var p = (window.innerHeight * 0.5 - r.top) / Math.max(1, r.height);
+      thread.style.setProperty("--p", Math.max(0, Math.min(1, p)).toFixed(4));
+    });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  onScroll();
+
+  function pulseDown() {
+    if (reduce) return;
+    thread.classList.remove("is-pulsing"); void thread.offsetWidth; thread.classList.add("is-pulsing");
+  }
+
+  /* ---------------- hero signals ---------------- */
+  var canvas = $(".signals");
+  var copy = $(".hero-copy");
+  if (canvas && window.Signals) {
+    signals = window.Signals.mount(canvas, {
+      host: heroEl,
+      reduce: reduce,
+      labels: ["vocal", "facial", "physiological", "neuro", "clinical"],
+      anchor: function (W, H) {
+        var hr = heroEl.getBoundingClientRect(), cr = copy.getBoundingClientRect();
+        return { x: Math.round(threadX() - hr.left) + 0.5, y: Math.max(H * 0.42, cr.top - hr.top - 26) };
+      },
+      onReady: function () { heroEl.classList.add("is-ready"); },
+      onPulseDown: pulseDown,
+    });
+  } else heroEl.classList.add("is-ready");
+
+  /* ---------------- lazy mounts ---------------- */
+  function whenNear(el, fn) {
+    var done = false;
+    function go() { if (!done) { done = true; fn(); } }
+    if (!("IntersectionObserver" in window)) return go();
+    var io = new IntersectionObserver(function (es) {
+      if (es[0].isIntersecting) { io.disconnect(); go(); }
+    }, { rootMargin: "900px 0px" });
+    io.observe(el);
+    el._mountNow = go;
+  }
+
+  /* ---------------- deep links ----------------
+     #projects/<id>, #talks/<id> and #interests/<id> open on that item;
+     #about, #experience, #bookshelf and the rest scroll natively. */
+  function target(hash) {
+    var m = /^#(projects|talks|interests)\/([\w-]+)$/.exec(hash || "");
+    if (!m) return null;
+    var prefix = { projects: "project-", talks: "talk-", interests: "interest-" }[m[1]];
+    return document.getElementById(prefix + m[2]) || document.getElementById(m[1]);
+  }
+  function show(el, smooth) {
+    if (!el) return;
+    var sec = el.closest(".chapter");
+    if (sec && sec._mountNow) sec._mountNow();
+    requestAnimationFrame(function () {
+      var top = el.getBoundingClientRect().top + window.pageYOffset - 96;
+      window.scrollTo({ top: top, behavior: smooth && !reduce ? "smooth" : "auto" });
+      el.classList.remove("is-flash"); void el.offsetWidth; el.classList.add("is-flash");
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
+      el.focus({ preventScroll: true });
+    });
+  }
+  window.addEventListener("hashchange", function () {
+    var el = target(location.hash);
+    if (el) show(el, true);
+    else {
+      var plain = location.hash && document.getElementById(location.hash.slice(1));
+      if (plain && plain._mountNow) plain._mountNow();
+    }
+  });
+  function initialHash() {
+    var el = target(location.hash);
+    if (el) {
+      show(el, false);
+      // Sections above may still be settling (fonts, lazy mounts); correct once if the item moved.
+      setTimeout(function () {
+        var d = el.getBoundingClientRect().top - 96;
+        if (Math.abs(d) > 4 && Math.abs(d) < 2000) window.scrollBy(0, d);
+      }, 700);
+      return;
+    }
+    var plain = location.hash && document.getElementById(location.hash.slice(1));
+    if (plain && plain.classList.contains("chapter")) {
+      if (plain._mountNow) plain._mountNow();
+      requestAnimationFrame(function () { plain.scrollIntoView(); });
+    }
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(initialHash); else initialHash();
+
   /* ---------------- structured data ---------------- */
-  (function jsonld() {
+  (function () {
     var now = list(S.experience)[0] || {};
     var data = {
       "@context": "https://schema.org",
@@ -745,6 +569,12 @@
     document.head.appendChild(s);
   })();
 
-  /* ---------------- start ---------------- */
-  setMode(mode(), true);
+  var foot = $(".foot-top");
+  if (foot) foot.addEventListener("click", function (e) {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    var h1 = $("#hero-name");
+    h1.setAttribute("tabindex", "-1");
+    h1.focus({ preventScroll: true });
+  });
 })();

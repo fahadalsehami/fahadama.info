@@ -1,12 +1,12 @@
-# Fahad Alsehami — personal site
+# Fahad Alsehami: personal site
 
-A personal website with no dependencies and no build step, designed after arunmommileti.com: every visit opens in **Starlight**, a night-sky view of the page. **Turn the lights on** to use the site in light or dark theme. Inside: About, Experience, Projects, Talks & prizes, Bookshelf, Interests and Play Me, a crayon tennis game.
+A personal website with no dependencies and no build step. The page opens on five live signals (vocal, facial, physiological, neuro and clinical) that flow in from the right and fuse into one line. That line becomes a thread running down the whole page, and every section hangs from it: About, Work, Projects, Talks & prizes, Bookshelf, Interests, Play Me and Say hello. The signature colour is sky, `#D2ECFF`, in light and dark themes.
 
 ## Preview it
 
 - **On a Mac:** double-click `preview.command`. It opens the site at `http://localhost:8000`; close the Terminal window to stop it. If macOS won't open it the first time, right-click it and choose Open.
 - **Any computer:** run `python3 -m http.server 8000` in this folder, then open `http://localhost:8000`.
-- Opening `index.html` straight from disk works too, but browsers don't let a page read pixels from local files, so the Starlight portrait shows as a grainy photo instead of particles. The local server shows the site exactly as it will look online.
+- Opening `index.html` straight from disk works too; the local server shows the site exactly as it will look online.
 
 ## Edit the content
 
@@ -14,31 +14,38 @@ Every word, link and picture lives in **`content/site.js`**. Edit, save, refresh
 
 - Text supports `**bold**`, `*italic*` and `[links](https://example.com)`. Straight quotes become curly ones on the page.
 - An empty `url: ""` shows an item without a link.
-- A section with no items hides its tab (for example, empty `books.items` hides the Bookshelf).
+- A section with no items is left out, along with its link in the menu (for example, empty `books.items` hides the Bookshelf).
 
 ### Sections
 
 | Section | In `content/site.js` | Notes |
 | --- | --- | --- |
-| Header | `person`, `hero` | Name, location, greeting and the one-line intro. |
-| About | `about` | The big statement, paragraphs, the facts table, and the particle emblem under it (`emblem.label` is the year on the laurel). |
-| Experience | `experience` | One row per role: `dates`, `title`, `org`, `orgUrl`, `place`, `detail`, and `logo: { src, alt }` for the square logo beside the dates (files in `content/logos/`, about 176 × 176). |
-| Projects | `projects.items` | `media: { image, alt, tone }` shows a screenshot from `content/projects/` in a window frame; `tone` sets the backdrop (`"sky"`, `"mint"`, `"lilac"`, `"blue"`, `"paper"`, `"rust"`). For work with no screenshot yet, `media` can be a drawn card instead: `"complex"` (a turning cell complex, used for CELLO), `"session"`, `"leaderboard"`, `"chart"`, `"globe"` or `"consensus"`. Each card has an anchor, so `#projects/cello` opens Projects at CELLO. |
-| Talks & prizes | `talks.items` | `{ id, year, place, title, role, detail, badge, photos }`. `photos` are `{ src, alt, caption, width, height }` from `content/talks/`: the first is pinned large like a polaroid, a second is pinned over its corner, and `badge` is the round sticker. `#talks/<id>` opens the section at that item (the About facts link to the MIT entry this way). |
+| Hero | `person`, `hero` | Name and the one-line intro under it. |
+| About | `about` | The big statement (`lead` is the softer opening), paragraphs, and the facts beside the portrait. `person.location` is added to the facts as "Based in". |
+| Work | `experience` | One entry per role on the timeline: `dates`, `title`, `org`, `orgUrl`, `place`, `detail`, and `logo: { src, alt }` (files in `content/logos/`, about 176 × 176). |
+| Projects | `projects.items` | `media: { image, alt, tone }` shows a screenshot from `content/projects/` rising out of a coloured mat; `tone` picks the mat (`"sky"`, `"lilac"`, `"mint"`, `"blue"`, `"paper"`). For work with no screenshot yet, `media: "complex"` draws a turning cell complex instead (used for CELLO). `#projects/<id>` opens the page at that project. |
+| Talks & prizes | `talks.items` | `{ id, year, place, title, role, detail, badge, photos }`. `photos` are `{ src, alt, caption, width, height }` from `content/talks/`: the first is shown large and a second overlaps its corner; `badge` is the pill on the first photo. `#talks/<id>` opens the page at that item (the About facts link to the MIT entry this way). |
 | Bookshelf | `books.items` | `{ title, author, note, color, accent }`, plus optional `ink` (spine text colour), `height` and `width` (about 0.75–1.15 and 0.7–1.4), `font: "serif"` for a serif spine, `spineTitle` / `spineAuthor` for shorter spine text, `reading: true` to show that book first, and `cover: "content/books/…"` for a real cover image. Long titles shrink and wrap onto two or three lines to fit the spine. |
-| Interests | `interests.items` | `figure` picks the 3D particle drawing: `"network"`, `"camera"`, `"tennis"`, `"mountain"`, `"bike"` or `"people"`. Add `photos: [{ src, caption }]` to pin polaroids next to it, and `project: "<project id>"` to link it to a Projects card (Explainers links to the explainers). |
-| Play Me | `play` | Tennis against you: move with the mouse, a finger or the arrow keys, serve with a click, a tap or the space bar. Hitting off the edge of the racket angles the ball, and too wide lands out. Four points, two clear, takes a game. Games and the longest rally are kept in the visitor's browser. |
-| Contact | `contact.items` | `{ label, value, url }`. Add `copy: true` to show a Copy button (useful for email). The first item gets the small accent dot. |
+| Interests | `interests.items` | `figure` picks the line drawing: `"network"`, `"camera"`, `"tennis"`, `"mountain"`, `"bike"` or `"people"`. Add `photos: [{ src, caption }]` to show small photos under the text, and `project: "<project id>"` to link the tile to a project (Explainers links to the explainers). `#interests/<id>` opens the page at that tile. |
+| Play Me | `play` | Tennis on a sky court: move with the mouse, a finger or the arrow keys, serve with a click, a tap or the space bar. Hitting off the edge of the racket angles the ball, and too wide lands out. Four points, two clear, takes a game. Games and the longest rally are kept in the visitor's browser. |
+| Contact | `contact.items` | `{ label, value, url }`. Add `copy: true` to show a Copy button (useful for email). |
 
 ### The portrait
 
-`content/images/portrait.webp` is a cut-out photo (transparent background, square, at least 560 × 560). In Starlight it is rebuilt from coloured particles.
-
-To make the portrait look toward the pointer like the original site, add nine photos of you looking in each direction and list them in `person.portrait.poses` (`center`, `up`, `down`, `left`, `right`, `upLeft`, `upRight`, `downLeft`, `downRight`). Without them the photo tilts gently instead.
+`content/images/portrait.webp` is a cut-out photo (transparent background, square, at least 560 × 560). The page shows it in one tone inside a round sky frame, so any cut-out photo will match the palette.
 
 ### Colours and type
 
-Tokens sit at the top of `assets/css/site.css`: light under `:root`, dark under `:root[data-theme="dark"]`, and Starlight under `:root[data-mode="starlight"]`.
+Tokens sit at the top of `assets/css/site.css`: light under `:root`, dark under `:root[data-theme="dark"]`. The canvases (hero signals, CELLO's cell complex, the tennis court) read their colours from the same file, so a colour changed there changes everywhere.
+
+| Token | Light | Dark | Used for |
+| --- | --- | --- | --- |
+| `--sky` | `#D2ECFF` | `#D2ECFF` | The signature: hero, mats, badges, the current chapter's node |
+| `--ink` | `#0C2033` | `#E6F1FB` | Text and the signal traces |
+| `--tide` | `#1D5C93` | `#D2ECFF` | Links, years and lit details |
+| `--paper` | `#F7FAFD` | `#07121D` | Page background |
+
+One typeface throughout: Bricolage Grotesque, a variable font whose letters tighten as they grow, from the hero name down to the captions.
 
 ## How it's published
 
@@ -53,26 +60,25 @@ The live site is [fahadama.info](https://fahadama.info). GitHub Pages serves it 
 
 | File | What it does |
 | --- | --- |
-| `index.html` | Page structure. Picks theme and Starlight before first paint so nothing flashes. |
+| `index.html` | Page structure. Picks the theme before first paint so nothing flashes. |
 | `content/site.js` | All content. |
-| `assets/js/site.js` | Builds the page from the content: tabs and links (`#about`, `#experience`, `#projects`, `#projects/<id>`, `#talks`, `#talks/<id>`, `#bookshelf`, `#interests`, `#interests/<id>`, `#play`), Starlight, theme, the portrait, contact, structured data. |
-| `assets/js/particles.js` | The particle engine: 2D drawings (emblem, "Say hello", the Starlight portrait) and the 3D point clouds for the Interests. |
-| `assets/js/starfield.js` | The night sky behind Starlight. |
-| `assets/js/mini-ui.js` | The Projects card media: framed screenshots, plus optional animated cards. |
-| `assets/js/bookshelf.js` | The 3D bookshelf. |
-| `assets/js/play.js` | Play Me: crayon tennis against the site. |
-| `assets/css/site.css` | Tokens, layout and every component, for Starlight, light and dark. |
-| `assets/fonts/` | Newsreader, Geist, Geist Mono and Caveat, self-hosted. |
+| `assets/js/site.js` | Builds the page from the content, and runs the menu, theme, scroll position on the thread, deep links (`#about`, `#experience`, `#projects`, `#projects/<id>`, `#talks`, `#talks/<id>`, `#bookshelf`, `#interests`, `#interests/<id>`, `#play`, `#contact`), contact buttons and structured data. |
+| `assets/js/signals.js` | The hero: five signals fusing into the thread. Pointing flares them; a click or tap sends a pulse of light along them and down the page. |
+| `assets/js/complex.js` | CELLO's picture: a slowly turning cell complex of nodes, edges and filled cells. |
+| `assets/js/bookshelf.js` | The 3D bookshelf on its glass shelf. |
+| `assets/js/play.js` | Play Me: tennis against the site. |
+| `assets/css/site.css` | Tokens, layout and every component, for light and dark. |
+| `assets/fonts/` | Bricolage Grotesque, self-hosted. |
 | `assets/img/` | Favicon, app icons and the social share image. |
+| `404.html` | The page for addresses that don't exist. |
 
-- **Starlight:** opens on every visit. "Turn the lights on" shows the site for the rest of the visit; the star button brings Starlight back. Add `?lights=on` to a link to skip it. Click anywhere in Starlight to drop a pool of light.
-- **Theme:** follows the device setting until a visitor picks one (the half-moon button, or a click on the portrait); the choice is remembered in that browser.
-- **Accessibility:** keyboard reachable throughout (arrow keys move between tabs and books, and move your racket in Play Me; Escape closes an open interest or book), visible focus, screen-reader labels and announcements, and reduced motion respected.
+- **Theme:** follows the device setting until a visitor picks one with the moon or sun button; the choice is remembered in that browser.
+- **The thread:** a soft light on it marks how far down the page you are, and the chapter you're reading lights its node.
+- **Accessibility:** keyboard reachable throughout (arrow keys move between books and move your racket in Play Me; Escape closes an open book or the menu), visible focus, screen-reader labels and announcements. With reduced motion on, the signals hold still, the pulse and the drawing animations are off, and the game still plays.
 
 ## Credits
 
-- Design after [arunmommileti.com](https://arunmommileti.com).
-- Fonts under the SIL Open Font License: Newsreader (Production Type), Geist and Geist Mono (Vercel), Caveat (Impallari Type). Licenses are in `assets/fonts/`.
+- Font under the SIL Open Font License: Bricolage Grotesque (The Bricolage Grotesque Project Authors). The license is in `assets/fonts/`.
 - Logos: Medera's mark from medera.info, BOTIM's wordmark (on BOTIM blue) from botim.me, and Substack's app icon from substack.com, captured November 2026. They belong to their owners and are shown only to identify the companies.
 - Screenshots: medera.info, the BH-ASR leaderboard and its Two gates explainer on Hugging Face, botim.me and Signal & Symptom on Substack. The portrait comes from Signal & Symptom.
 - Talks & prizes: the MIT Hacking Medicine photos (New York, 2018) are Fahad's own. The Regeneron ISEF 2024 artwork belongs to Society for Science and is shown only to identify the event.

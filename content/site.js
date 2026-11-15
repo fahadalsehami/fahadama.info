@@ -5,7 +5,7 @@
 
    Text supports **bold**, *italic* and [links](https://example.com).
    Leave a url empty ("") to show an item without a link.
-   Empty lists hide their tab (for example the Bookshelf until you add books).
+   An empty list hides its section (for example the Bookshelf until you add books).
    ===================================================================== */
 
 window.SITE = {
@@ -21,18 +21,13 @@ window.SITE = {
     firstName: "Fahad",
     location: "San Francisco, California",
     portrait: {
-      // A cut-out photo (transparent background) sits in the round frame.
+      // A cut-out photo (transparent background), shown in one tone inside a round sky frame.
       src: "content/images/portrait.webp",
       alt: "Portrait of Fahad Alsehami",
-      // Optional: nine photos looking in different directions make the portrait
-      // follow the pointer. Add files and paths here, e.g. up: "content/images/pose-up.webp".
-      // Keys: center, up, down, left, right, upLeft, upRight, downLeft, downRight.
-      poses: {},
     },
   },
 
   hero: {
-    greeting: "Hello! I'm Fahad",
     intro: "I'm a serial entrepreneur and product builder working where AI meets behavioral health.",
   },
 
@@ -51,7 +46,6 @@ window.SITE = {
       { label: "Previously", value: "BOTIM, co-founder and product" },
       { label: "Recognition", value: "[MIT Hacking Medicine Grand Prize, New York 2018](#talks/mit-hacking-medicine)" },
     ],
-    emblem: { kind: "laurel", label: "2018" }, // drawn in particles under the facts
   },
 
   /* ---------------- Experience ----------------
@@ -68,7 +62,7 @@ window.SITE = {
         "Building the AI co-therapy OS for behavioral health: 23 clinical agents, the BH-ASR speech model with its public 13-recognizer leaderboard, Medera Glass for EHR write-back, and a patent-pending multimodal co-therapy engine, built to SOC 2 Type II, HIPAA and GDPR.",
     },
     {
-      dates: "Mar 2025 — Present",
+      dates: "Mar 2025 – Present",
       title: "Writer",
       org: "Signal & Symptom",
       orgUrl: "https://alsehami.substack.com",
@@ -90,18 +84,17 @@ window.SITE = {
   ],
 
   /* ---------------- Projects ----------------
-     media: { image, alt, tone } shows a screenshot in a window frame.
-     tone sets the backdrop: "sky", "mint", "lilac", "blue", "paper" or "rust".
-     Work with no public screenshot yet can use a drawn card instead:
-     "complex" (a cell complex), "session", "leaderboard", "chart", "globe"
-     or "consensus". */
+     media: { image, alt, tone } shows a screenshot rising out of a coloured mat.
+     tone sets the mat: "sky", "lilac", "mint", "blue" or "paper".
+     Work with no public screenshot yet can use media: "complex" instead,
+     a cell complex drawn live. Link to an item with #projects/<id>. */
   projects: {
     title: "Selected work",
     note: "Things I've built and shipped :)",
     items: [
       {
         id: "co-therapy",
-        eyebrow: "Medera · Founder",
+        eyebrow: "Built at Medera",
         title: "Co-therapy OS",
         url: "https://www.medera.info/agents",
         detail:
@@ -111,7 +104,7 @@ window.SITE = {
       },
       {
         id: "bh-asr",
-        eyebrow: "Medera · Open benchmark",
+        eyebrow: "Open benchmark from Medera",
         title: "Medera BH-ASR",
         url: "https://huggingface.co/Medera/medera-bh-asr",
         detail:
@@ -121,7 +114,7 @@ window.SITE = {
       },
       {
         id: "glass",
-        eyebrow: "Medera · EHR write-back",
+        eyebrow: "EHR write-back at Medera",
         title: "Medera Glass",
         url: "https://www.medera.info/platform/glass",
         detail:
@@ -131,7 +124,7 @@ window.SITE = {
       },
       {
         id: "explainers",
-        eyebrow: "Medera · Explainers",
+        eyebrow: "Explainer videos for Medera",
         title: "Seven explainers",
         url: "https://huggingface.co/Medera/medera-bh-asr#explainers",
         detail:
@@ -141,7 +134,7 @@ window.SITE = {
       },
       {
         id: "hallucination-guard",
-        eyebrow: "Medera research · In progress",
+        eyebrow: "Medera research, in progress",
         title: "Hallucination guard",
         url: "https://alsehami.substack.com/p/the-epistemological-crisis-of-llms",
         detail:
@@ -151,17 +144,17 @@ window.SITE = {
       },
       {
         id: "cello",
-        eyebrow: "Independent research · Topological deep learning",
+        eyebrow: "Independent research in topological deep learning",
         title: "CELLO",
         url: "",
         detail:
           "My own graph learning architecture and training algorithm, built on topological deep learning: it learns from higher-order structure, cells as well as nodes and edges, and is aimed at the top of public graph benchmarks. Trained end to end on NVIDIA A100 GPUs.",
         tags: ["Topological deep learning", "Graph learning", "In progress"],
-        media: "complex", // a cell complex drawn in particles; swap for a screenshot once results are public
+        media: "complex", // a turning cell complex, drawn live; swap for a screenshot once results are public
       },
       {
         id: "botim",
-        eyebrow: "Co-founder · Acquired 2023",
+        eyebrow: "Co-founded, acquired in 2023",
         title: "BOTIM",
         url: "https://www.botim.me",
         detail:
@@ -171,7 +164,7 @@ window.SITE = {
       },
       {
         id: "signal-and-symptom",
-        eyebrow: "Writing · Since 2025",
+        eyebrow: "Writing since 2025",
         title: "Signal & Symptom",
         url: "https://alsehami.substack.com",
         detail:
@@ -184,11 +177,10 @@ window.SITE = {
 
   /* ---------------- Talks & prizes ----------------
      Each item: { id, year, place, title, role, detail, badge, photos }.
-     photos: [{ src, alt, caption, width, height }]. The first photo is pinned large;
-     a second one is pinned over its corner. badge is the round sticker on the photo.
+     photos: [{ src, alt, caption, width, height }]. The first photo is shown large;
+     a second one overlaps its corner. badge is the pill on the first photo.
      Link to an item with #talks/<id>. */
   talks: {
-    label: "Talks & prizes",
     title: "Talks & prizes",
     note: "Where I've spoken, won and judged :)",
     items: [
@@ -197,7 +189,7 @@ window.SITE = {
         year: "2018",
         place: "New York City",
         title: "Grand Prize, MIT Hacking Medicine",
-        role: "Speaker · Grand Prize winner",
+        role: "Speaker and Grand Prize winner",
         detail: "Spoke on stage at MIT Hacking Medicine in New York City and won the Grand Prize.",
         badge: "Grand Prize",
         photos: [
@@ -218,7 +210,7 @@ window.SITE = {
         year: "2024",
         place: "Los Angeles",
         title: "Grand Award Judge, Regeneron ISEF",
-        role: "Volunteer judge · Behavioral and Social Sciences",
+        role: "Volunteer judge, Behavioral and Social Sciences",
         detail: "Served as a volunteer Grand Award Judge at Regeneron ISEF 2024, the International Science and Engineering Fair, in Los Angeles, assigned to the Behavioral and Social Sciences category.",
         badge: "Judge",
         photos: [
@@ -233,7 +225,7 @@ window.SITE = {
   },
 
   /* ---------------- Bookshelf ----------------
-     Add books to show the Bookshelf tab. Each book:
+     Add books to show the Bookshelf. Each book:
      { title: "", author: "", note: "A line about the book, or why it matters to you.",
        color: "#2f4a8a", accent: "#e8b04b", height: 1, width: 1 }
      Optional: ink (spine text colour), font: "serif", spineTitle / spineAuthor
@@ -382,10 +374,12 @@ window.SITE = {
     ],
   },
 
-  /* ---------------- Interests ---------------- */
+  /* ---------------- Interests ----------------
+     figure picks the line drawing: network, camera, tennis, mountain, bike or people.
+     project links the tile to a project by its id. Link to a tile with #interests/<id>. */
   interests: {
     title: "Interests",
-    note: "Six things I love outside of work, each one built from particles. Pick one :)",
+    note: "Six things I love outside of work.",
     items: [
       {
         id: "social-science",
@@ -442,7 +436,7 @@ window.SITE = {
   /* ---------------- Contact ---------------- */
   contact: {
     title: "Say hello",
-    note: "always happy to talk AI, health and startups.",
+    note: "Always happy to talk AI, health and startups.",
     items: [
       // Add your email to show a Copy button: { label: "Email", value: "you@example.com", url: "mailto:you@example.com", copy: true },
       { label: "Substack", value: "Signal & Symptom", url: "https://alsehami.substack.com" },
