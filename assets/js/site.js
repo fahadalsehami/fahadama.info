@@ -268,29 +268,32 @@
     whenNear(sec, function () { window.Bookshelf.mount(slot, items); });
   })();
 
-  /* ---------------- interests ---------------- */
-  var GLYPHS = {
-    network: '<path d="M38 70 92 38M92 38 150 60M150 60 204 30M92 38 118 92M150 60 118 92M150 60 196 92M38 70 118 92"/><circle cx="38" cy="70" r="5"/><circle cx="92" cy="38" r="7"/><circle cx="150" cy="60" r="9" class="g-hub"/><circle cx="204" cy="30" r="5"/><circle cx="118" cy="92" r="6"/><circle cx="196" cy="92" r="5"/>',
-    camera: '<path d="M14 62h18l6-14 7 30 8-44 9 52 7-34 6 16 6-6h22"/><path d="M128 40v44l36-22z" class="g-hub"/><path d="M176 62h50"/>',
-    tennis: '<path d="M16 96C46 18 86 18 114 96M114 96C136 44 164 44 182 96"/><circle cx="202" cy="80" r="11" class="g-hub"/><path d="M193 73c5 4 5 10 0 14M211 73c-5 4-5 10 0 14"/><path d="M8 100h224" class="g-ground"/>',
-    mountain: '<path d="M8 100 46 64l16 12 34-46 22 26 18-14 40 58 16-14 40 14"/><path d="M96 30V10l18 6-18 6" class="g-hub"/><path d="M8 100h224" class="g-ground"/>',
-    bike: '<path d="M16 96C54 96 36 44 84 46s58 46 92 22 24-40 50-36"/><circle cx="16" cy="96" r="6"/><circle cx="226" cy="32" r="7" class="g-hub"/><path d="M60 102h16M100 102h16M140 102h16" class="g-ground"/>',
-    people: '<path d="M30 40 62 30 70 66 30 40M62 30 104 58M70 66 104 58M136 58 170 30 182 70 136 58M170 30 214 44 182 70M104 58h32"/><circle cx="30" cy="40" r="5"/><circle cx="62" cy="30" r="6"/><circle cx="70" cy="66" r="5"/><circle cx="104" cy="58" r="7" class="g-hub"/><circle cx="136" cy="58" r="7" class="g-hub"/><circle cx="170" cy="30" r="6"/><circle cx="182" cy="70" r="5"/><circle cx="214" cy="44" r="5"/>',
+  var FIGURE_LABELS = {
+    network: "A social graph in points: a hub of influence and the ties around it",
+    camera: "A video camera on a tripod, drawn in points",
+    tennis: "A tennis racket and ball, drawn in points",
+    mountain: "A range of peaks with a trail to the summit and a flag, drawn in points",
+    bike: "A road bike, drawn in points",
+    people: "Two people shaking hands under a speech bubble, drawn in points",
   };
+  /* ---------------- interests ----------------
+     Each tile holds a 3D figure made of points (assets/js/figures.js). The
+     figures are built when the section comes near; each assembles as it
+     scrolls into view and turns toward the pointer. */
   (function () {
     var sec = $('[data-slot="interests"]');
     var items = list(interests.items);
     if (!items.length) { sec.remove(); return; }
     head(sec, "interests", interests.title || "Interests", interests.note);
     var ul = make("ul", "interests");
+    var tiles = [];
     items.forEach(function (it) {
       var li = make("li", "interest");
       if (it.id) li.id = "interest-" + it.id;
-      var g = GLYPHS[it.figure] || GLYPHS.network;
-      var glyph = make("div", "interest-glyph", '<svg viewBox="0 0 240 120" aria-hidden="true" focusable="false">' + g + "</svg>");
-      // Normalised lengths let one stroke-dash animation draw every line, whatever its length.
-      $$("path:not(.g-ground)", glyph).forEach(function (pth) { pth.setAttribute("pathLength", "1"); });
-      li.appendChild(glyph);
+      var fig = make("div", "interest-figure", '<canvas class="interest-canvas"></canvas>');
+      fig.setAttribute("role", "img");
+      fig.setAttribute("aria-label", FIGURE_LABELS[it.figure] || text(it.label || it.title));
+      li.appendChild(fig);
       li.appendChild(make("h3", "interest-title", text(it.label || it.title)));
       if (it.text) li.appendChild(make("p", "interest-text", md(it.text)));
       var ph = list(it.photos).filter(function (p) { return p && p.src; });
@@ -306,16 +309,25 @@
         if (target) li.appendChild(make("a", "interest-link", "See " + text(target.title)));
         if (target) li.lastChild.setAttribute("href", "#projects/" + it.project);
       }
-      // Redraw the glyph when someone points at or focuses the tile.
-      li.addEventListener("pointerenter", function () { redraw(li); });
-      li.addEventListener("focusin", function () { redraw(li); });
       ul.appendChild(li);
+      tiles.push({ li: li, fig: fig, it: it });
     });
     sec.appendChild(ul);
-    function redraw(li) {
-      if (reduce) return;
-      li.classList.remove("is-drawing"); void li.offsetWidth; li.classList.add("is-drawing");
-    }
+
+    whenNear(sec, function () {
+      if (!window.Figures) return;
+      tiles.forEach(function (tile, i) {
+        var api = window.Figures.mount($("canvas", tile.fig), tile.it.figure, { reduce: reduce, delay: (i % 3) * 140 + Math.floor(i / 3) * 90 });
+        // The figure turns toward the pointer anywhere on the tile.
+        tile.li.addEventListener("pointermove", function (e) {
+          var r = tile.fig.getBoundingClientRect();
+          api.point(Math.max(-0.5, Math.min(0.5, (e.clientX - r.left) / r.width - 0.5)), Math.max(-0.5, Math.min(0.5, (e.clientY - r.top) / r.height - 0.5)));
+        });
+        tile.li.addEventListener("pointerleave", function () { api.point(null); });
+        tile.li.addEventListener("focusin", function () { api.hover(true); });
+        tile.li.addEventListener("focusout", function () { api.hover(false); });
+      });
+    });
   })();
 
   /* ---------------- play (mounted when near) ---------------- */
