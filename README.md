@@ -1,6 +1,6 @@
 # Fahad Alsehami: personal site
 
-A personal website with no dependencies and no build step. The page opens on five live signals (vocal, facial, physiological, neuro and clinical) that flow in from the right and fuse into one line. That line becomes a thread running down the whole page, and every section hangs from it: About, Work, Projects, Talks & prizes, Bookshelf, Interests, Play Me and Say hello. The signature colour is sky, `#D2ECFF`, in light and dark themes.
+A personal website with no dependencies and no build step. The page opens on a body and its brain, drawn as points from real anatomy. Scrolling reads the body one signal at a time (eyes, face, voice, heart, breath and skin): each lights its pathway from the brain, and its trace flows left and fuses into one line. Then the brain gathers into Fahad's face, which becomes his photo and settles into the portrait in About. The fused line becomes a thread running down the whole page, and every section hangs from it: About, Work, Projects, Talks & prizes, Bookshelf, Interests, Play Me and Say hello. The signature colour is sky, `#D2ECFF`, in light and dark themes.
 
 ## Preview it
 
@@ -20,7 +20,7 @@ Every word, link and picture lives in **`content/site.js`**. Edit, save, refresh
 
 | Section | In `content/site.js` | Notes |
 | --- | --- | --- |
-| Hero | `person`, `hero` | Name and the one-line intro under it. |
+| Hero | `person`, `hero` | Name and the one-line intro under it. The face at the end of the hero is `person.portrait`, the same photo as About. |
 | About | `about` | The big statement (`lead` is the softer opening), paragraphs, and the facts beside the portrait. `person.location` is added to the facts as "Based in". |
 | Work | `experience` | One entry per role on the timeline, newest first: `dates`, `title`, `org`, `orgUrl`, `place`, `detail`, and `logo: { src, alt }` (files in `content/logos/`, about 176 × 176). For a role with no logo image, `logo: { mark: "UCSF" }` shows the letters on a sky tile instead. |
 | Projects | `projects.items` | `media: { image, alt, tone }` shows a screenshot from `content/projects/` rising out of a coloured mat; `tone` picks the mat (`"sky"`, `"lilac"`, `"mint"`, `"blue"`, `"paper"`). For work with no screenshot yet, `media: "complex"` draws a turning cell complex instead (used for CELLO). A video uses `media: { video, poster, length, alt, tone }`: the poster shows with a Play button, nothing plays by itself, and it pauses when scrolled out of view (keep the file under about 10 MB). `credit` adds a small attribution line under the tags. `#projects/<id>` opens the page at that project. |
@@ -63,7 +63,8 @@ The live site is [fahadama.info](https://fahadama.info). GitHub Pages serves it 
 | `index.html` | Page structure. Picks the theme before first paint so nothing flashes. |
 | `content/site.js` | All content. |
 | `assets/js/site.js` | Builds the page from the content, and runs the menu, theme, scroll position on the thread, deep links (`#about`, `#experience`, `#projects`, `#projects/<id>`, `#talks`, `#talks/<id>`, `#bookshelf`, `#interests`, `#interests/<id>`, `#play`, `#contact`), contact buttons and structured data. |
-| `assets/js/signals.js` | The hero: five signals fusing into the thread. Pointing flares them; a click or tap sends a pulse of light along them and down the page. |
+| `assets/js/signals.js` | The hero: the body read one signal at a time as you scroll, the traces fusing into the thread, then the brain gathering into the portrait and the photo landing in About. Arriving there sends a pulse of light down the thread. |
+| `assets/js/anatomy-data.js` | The anatomy the hero draws: about 30,000 surface points of the skin, brain, heart and airways, and the nerve pathways, loaded after the page. |
 | `assets/js/complex.js` | CELLO's picture: a slowly turning cell complex of nodes, edges and filled cells. |
 | `assets/js/figures.js` | The Interests figures: six small 3D sculptures made of points, shaded by depth, with glowing accents. |
 | `assets/js/bookshelf.js` | The 3D bookshelf on its glass shelf. |
@@ -75,12 +76,12 @@ The live site is [fahadama.info](https://fahadama.info). GitHub Pages serves it 
 
 - **Theme:** follows the device setting until a visitor picks one with the moon or sun button; the choice is remembered in that browser.
 - **The thread:** a soft light on it marks how far down the page you are, and the chapter you're reading lights its node.
-- **Accessibility:** keyboard reachable throughout (arrow keys move between books and move your racket in Play Me; Escape closes an open book or the menu), visible focus, screen-reader labels and announcements. With reduced motion on, the signals and the Interests figures hold still, the pulse is off, and the game still plays.
+- **Accessibility:** keyboard reachable throughout (arrow keys move between books and move your racket in Play Me; Escape closes an open book or the menu), visible focus, screen-reader labels and announcements. With reduced motion on, the hero is one still picture with every signal lit, the Interests figures hold still, the pulse is off, and the game still plays.
 
 ## Credits
 
 - Font under the SIL Open Font License: Bricolage Grotesque (The Bricolage Grotesque Project Authors). The license is in `assets/fonts/`.
 - Logos: Medera's mark from medera.info and BOTIM's wordmark (on BOTIM blue) from botim.me, captured November 2026. They belong to their owners and are shown only to identify the companies. The other roles show their names' letters, not logos.
 - Screenshots: medera.info's agents and Medera Glass pages, the BH-ASR leaderboard and its Two gates explainer on Hugging Face, a frame from the Perimeter explainer video, botim.me and Signal & Symptom on Substack. The portrait comes from Signal & Symptom.
-- Reading the Mind from the Body: the video's anatomy is adapted from BodyParts3D, © The Database Center for Life Science, licensed under CC BY 4.0.
+- Anatomy: the hero's points and the Reading the Mind from the Body video are adapted from BodyParts3D, © The Database Center for Life Science, licensed under CC BY 4.0. The hero merges its structures and resamples them as points.
 - Talks & prizes: the MIT Hacking Medicine photos (New York, 2018) are Fahad's own. The Regeneron ISEF 2024 artwork belongs to Society for Science and is shown only to identify the event.

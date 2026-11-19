@@ -9,7 +9,6 @@
   var S = window.SITE || {};
   var root = document.documentElement;
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var finePointer = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
   /* ---------------- helpers ---------------- */
   function $(sel, el) { return (el || document).querySelector(sel); }
@@ -100,7 +99,7 @@
   if (hero.intro) $('[data-slot="intro"]').innerHTML = md(hero.intro);
   var heroEl = $(".hero");
   var hint = $('[data-slot="hint"]');
-  if (hint && !reduce) hint.textContent = finePointer ? "Point at the signals. Click to send a pulse." : "Tap the signals to send a pulse.";
+  if (hint && !reduce) hint.textContent = "Scroll";
 
   /* ---------------- about ---------------- */
   (function () {
@@ -532,20 +531,25 @@
     thread.classList.remove("is-pulsing"); void thread.offsetWidth; thread.classList.add("is-pulsing");
   }
 
-  /* ---------------- hero signals ---------------- */
+  /* ---------------- hero: the body, read one signal at a time ---------------- */
   var canvas = $(".signals");
   var copy = $(".hero-copy");
+  var stage = $(".hero-stage");
   if (canvas && window.Signals) {
     signals = window.Signals.mount(canvas, {
-      host: heroEl,
+      track: heroEl,
+      stage: stage,
+      copy: copy,
       reduce: reduce,
-      labels: ["vocal", "facial", "physiological", "neuro", "clinical"],
+      // the face at the end of the hero is this photo, and it lands in About's portrait
+      portrait: (person.portrait || {}).src,
+      slot: function () { return $(".about .portrait"); },
       anchor: function (W, H) {
-        var hr = heroEl.getBoundingClientRect(), cr = copy.getBoundingClientRect();
-        return { x: Math.round(threadX() - hr.left) + 0.5, y: Math.max(H * 0.42, cr.top - hr.top - 26) };
+        var sr = stage.getBoundingClientRect(), cr = copy.getBoundingClientRect();
+        return { x: Math.round(threadX() - sr.left) + 0.5, y: Math.max(H * 0.36, cr.top - sr.top - 26) };
       },
       onReady: function () { heroEl.classList.add("is-ready"); },
-      onPulseDown: pulseDown,
+      onLand: pulseDown,
     });
   } else heroEl.classList.add("is-ready");
 
