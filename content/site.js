@@ -36,50 +36,59 @@ window.SITE = {
     lead: "What I do:",
     statement: "build from zero to scale, take research into the clinic, and make AI earn trust.",
     paragraphs: [
-      "I'm the founder of [Medera](https://www.medera.info), the AI co-therapy OS for behavioral health. Before Medera I co-founded BOTIM and worked on its product; it became the Middle East's first VoIP unicorn and was acquired in 2023 by G42-backed Astra Tech, alongside a $500M round led by G42.",
-      "At Medera our agents carry the work around every therapy and primary-care session, from the intake packet to the claim, and nothing is filed without a clinician's review. I work across multi-agent orchestration, clinical speech recognition in English and Arabic, multimodal biomarkers (vocal, facial, physiological, neuro and clinical), and FHIR and HL7 interoperability.",
+      "I'm the founder of [Medera](https://www.medera.info), the AI co-therapy OS for behavioral health, and a co-founder of BOTIM. I work across multi-agent orchestration, clinical speech recognition in English and Arabic, multimodal biomarkers (vocal, facial, physiological, neuro and clinical), and FHIR and HL7 interoperability.",
       "I care about verification: the layers that make language models safe enough for psychiatry. I write about it in [Signal & Symptom](https://alsehami.substack.com).",
     ],
     facts: [
-      { label: "Currently", value: "Medera, founder" },
-      { label: "Working across", value: "AI, behavioral health, speech" },
-      { label: "Previously", value: "BOTIM, co-founder and product" },
+      { label: "Education", value: "M.S. Digital Health Informatics, University of San Francisco" },
+      { label: "Languages", value: "Arabic and English" },
       { label: "Recognition", value: "[MIT Hacking Medicine Grand Prize, New York 2018](#talks/mit-hacking-medicine)" },
     ],
   },
 
   /* ---------------- Experience ----------------
-     logo: a square image (about 176 x 176) shown beside the dates. */
+     One entry per role, newest first. logo: a square image (about 176 x 176)
+     shown beside the title, or { mark: "UCSF" } for a lettered tile. */
   experience: [
     {
-      dates: "Present",
-      title: "Founder",
+      dates: "2024 – Present",
+      title: "Founder & CEO",
       org: "Medera",
       orgUrl: "https://www.medera.info",
       place: "San Francisco",
       logo: { src: "content/logos/medera.png", alt: "Medera logo" },
       detail:
-        "Building the AI co-therapy OS for behavioral health: 23 clinical agents, the BH-ASR speech model with its public 13-recognizer leaderboard, Medera Glass for EHR write-back, and a patent-pending multimodal co-therapy engine, built to SOC 2 Type II, HIPAA and GDPR.",
+        "Building the AI co-therapy OS for behavioral health: patent-pending, and built to SOC 2 Type II, HIPAA and GDPR.",
     },
     {
-      dates: "Mar 2025 – Present",
-      title: "Writer",
-      org: "Signal & Symptom",
-      orgUrl: "https://alsehami.substack.com",
-      place: "Substack",
-      logo: { src: "content/logos/substack.png", alt: "Substack logo" },
+      dates: "Mar 2021 – Oct 2021",
+      title: "Data Scientist Intern",
+      org: "UCSF Health Hub",
+      orgUrl: "",
+      place: "San Francisco",
+      logo: { mark: "UCSF" },
       detail:
-        "Started writing about building agentic AI to rewire mental healthcare, then turned to the epistemological crisis of LLMs in psychiatry: how to detect hallucinations, and why dynamical systems theory offers a way forward.",
+        "Analyzed and managed the entries, judges and categories in Award Force for the 3rd annual UCSF Health Awards (formerly the UCSF Digital Health Awards): more than 1,200 submissions in 16 categories, scored by more than 450 judges over three rounds.",
     },
     {
-      dates: "2017",
-      title: "Co-founder and Product",
+      dates: "Feb 2016 – Dec 2019",
+      title: "Co-founder and Chief Product Officer",
       org: "BOTIM",
       orgUrl: "https://www.botim.me",
-      place: "UAE",
+      place: "San Francisco – Dubai",
       logo: { src: "content/logos/botim.png", alt: "BOTIM logo" },
       detail:
-        "Co-founded BOTIM and worked on its product. It grew into the Middle East's first VoIP unicorn with 90 million registered users by 2023, when G42-backed Astra Tech acquired it alongside a $500M round led by G42.",
+        "A video and voice calling app developed by Algento, a San Francisco mobile-technology company. I co-founded it and led its product.",
+    },
+    {
+      dates: "Feb 2015 – Dec 2015",
+      title: "Business Development Manager (Middle East)",
+      org: "SOMA Messenger",
+      orgUrl: "",
+      place: "San Francisco",
+      logo: { mark: "SOMA" },
+      detail:
+        "Managed VoIP partnerships with Gulf mobile operators for Instanza's HD video, voice and messaging app, which reached 10 million users within 30 days of launch, and designed the peer-to-peer payment infrastructure for a mobile payment product built on a white-label version of it, which won regulatory approval in Saudi Arabia.",
     },
   ],
 
@@ -96,7 +105,7 @@ window.SITE = {
         id: "co-therapy",
         eyebrow: "Built at Medera",
         title: "Co-therapy OS",
-        url: "https://www.medera.info/agents",
+        url: "https://www.medera.info/clinical/agents",
         detail:
           "23 agents carry the work around every therapy session, from the intake packet to the claim, kept in step by a Care Orchestrator. A clinician approves every step.",
         tags: ["Multi-agent", "FHIR R4", "Clinician in the loop"],
@@ -108,7 +117,7 @@ window.SITE = {
         title: "Medera BH-ASR",
         url: "https://huggingface.co/Medera/medera-bh-asr",
         detail:
-          "Speech recognition for behavioral-health conversations in English and Arabic. It sits at the top of a public 13-recognizer leaderboard for English consultations and invents no drug names under a medication prompt.",
+          "Speech recognition for behavioral-health conversations in English and Arabic. It sits at the top of a public 13-recognizer leaderboard for English consultations and invents no drug names under a medication prompt. Now extending to Arabic dialects, Persian, Spanish and Mandarin.",
         tags: ["English", "Arabic", "Hugging Face"],
         media: { image: "content/projects/bh-asr-leaderboard.webp", alt: "The behavioral-health speech recognition leaderboard, with Medera BH-ASR Pro first of 13 recognizers", tone: "lilac" },
       },
@@ -116,7 +125,7 @@ window.SITE = {
         id: "glass",
         eyebrow: "EHR write-back at Medera",
         title: "Medera Glass",
-        url: "https://www.medera.info/platform/glass",
+        url: "https://www.medera.info/clinical/platform/glass",
         detail:
           "Agents sign in to the EHR a practice already runs and file the notes, codes, scores and letters, the way a careful colleague would. No interface project, no copy-paste.",
         tags: ["Browser agents", "EHR", "Audit log"],
@@ -138,9 +147,19 @@ window.SITE = {
         title: "Hallucination guard",
         url: "https://alsehami.substack.com/p/the-epistemological-crisis-of-llms",
         detail:
-          "An end-to-end hallucination-detection and consensus layer that checks open-source models alongside Claude, OpenAI and Grok, modeled on Vectara's HHEM. I wrote about the problem it tackles in Signal & Symptom.",
+          "An end-to-end hallucination-detection and consensus layer that checks open-source models alongside Claude, OpenAI and Grok, modeled on Vectara's HHEM. My manuscript *Certify the Gate, Not the Generator* certifies which claims may reach a reader: on 81,414 MedLFQA claims it keeps 77.8% at a 3% unsupported rate. I wrote about the problem it tackles in Signal & Symptom.",
         tags: ["Multi-LLM", "Verification", "Open source"],
         media: { image: "content/projects/hallucination-essay.webp", alt: "The Signal & Symptom essay on LLM hallucination detection in psychiatry", tone: "paper" },
+      },
+      {
+        id: "perimeter",
+        eyebrow: "Independent research in computer vision",
+        title: "Perimeter",
+        url: "",
+        detail:
+          "A vision transformer that reads an image as its parts, not as a grid of squares: each picture becomes an oriented cell complex of regions, and one signed pass along the region borders gives every region's exact area, centre and spread. In a CPU pilot on Imagewoof, region tokens beat patch tokens on all three seeds (64.7% vs 62.8% top-1) with 69% of the compute.",
+        tags: ["Vision transformers", "Topological deep learning", "In progress"],
+        media: { image: "content/projects/perimeter.webp", alt: "A frame from the Perimeter explainer: SLIC splits a photo of a dog into regions, the sky into a few large ones and the head and legs into their own", tone: "blue" },
       },
       {
         id: "cello",
@@ -148,8 +167,8 @@ window.SITE = {
         title: "CELLO",
         url: "",
         detail:
-          "My own graph learning architecture and training algorithm, built on topological deep learning: it learns from higher-order structure, cells as well as nodes and edges, and is aimed at the top of public graph benchmarks. Trained end to end on NVIDIA A100 GPUs.",
-        tags: ["Topological deep learning", "Graph learning", "In progress"],
+          "Vision transformers on oriented cell complexes: each block passes messages between image patches, their adjacencies and 2 × 2 squares, so the model sees how patches are arranged, not only which belong together. On CIFAR-10 it reaches 89.54% at about 0.1 GMACs, against at most 88.56% for ViT and HgVT (one seed so far), and early exits certified with Learn-then-Test cut compute 2.18×.",
+        tags: ["Topological deep learning", "Vision transformers", "In progress"],
         media: "complex", // a turning cell complex, drawn live; swap for a screenshot once results are public
       },
       {
@@ -158,7 +177,7 @@ window.SITE = {
         title: "BOTIM",
         url: "https://www.botim.me",
         detail:
-          "Co-founded and worked on product at the Middle East's first VoIP unicorn: 90 million registered users by 2023, when G42-backed Astra Tech acquired it alongside a $500M round led by G42.",
+          "The Middle East's first VoIP unicorn: 90 million registered users and 80% penetration in the UAE by 2023, when G42-backed Astra Tech acquired it alongside a $500M round led by G42.",
         tags: ["VoIP", "Consumer", "UAE"],
         media: { image: "content/projects/botim.webp", alt: "The BOTIM website today: love talks, money moves, all on botim", tone: "blue" },
       },
@@ -221,6 +240,9 @@ window.SITE = {
           },
         ],
       },
+      // Items without photos are listed one line each, under the others.
+      { id: "rad-global-forum", year: "2020", place: "Beverly Hills", title: "Speaker, RAD Global Forum" },
+      { id: "misk-hackathon", year: "2016", place: "Riyadh", title: "Runner-up, MiSK Hackathon" },
     ],
   },
 
@@ -309,7 +331,7 @@ window.SITE = {
         color: "#E46C3E", accent: "#FBE4C8", height: 0.98, width: 0.95,
       },
       {
-        title: "Deep Thinking", author: "Garry Kasparov",
+        title: "Deep Thinking", author: "Garry Kasparov with Mig Greengard", spineAuthor: "Kasparov",
         note: "Where Machine Intelligence Ends and Human Creativity Begins.",
         color: "#E15A35", accent: "#262626", height: 0.98, width: 0.9,
       },
