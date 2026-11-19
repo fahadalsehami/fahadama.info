@@ -42,7 +42,7 @@ window.SITE = {
     ],
     facts: [
       { label: "Focus", value: "Consciousness, brain decoding and neuroscience-informed AI" },
-      { label: "Education", value: "M.S. Digital Health Informatics, University of San Francisco" },
+      { label: "Education", value: "M.S. Bioinformatics, University of San Francisco" },
       { label: "Languages", value: "Arabic and English" },
       { label: "Recognition", value: "[MIT Hacking Medicine Grand Prize, New York 2018](#talks/mit-hacking-medicine)" },
     ],
