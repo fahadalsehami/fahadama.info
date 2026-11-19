@@ -395,11 +395,6 @@ window.SITE = {
         note: "The Birth of a New America.",
         color: "#C51F2A", accent: "#F4F0E8", height: 1.0, width: 0.95, font: "serif",
       },
-      {
-        title: "Surprise, Kill, Vanish", author: "Annie Jacobsen",
-        note: "The Secret History of CIA Paramilitary Armies, Operators, and Assassins.",
-        color: "#2A2623", accent: "#D9783A", ink: "#EFE7DC", height: 1.06, width: 1.15,
-      },
       // The inner life
       {
         title: "A New Earth", author: "Eckhart Tolle",
