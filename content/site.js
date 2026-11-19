@@ -113,7 +113,6 @@ window.SITE = {
         tags: ["Neuroscience", "Multimodal biomarkers", "In progress"],
         // A narrated video: the poster shows until the visitor presses Play. `length` labels the button.
         media: { video: "content/projects/reading-the-mind.mp4", poster: "content/projects/reading-the-mind.webp", length: "2:54", alt: "Reading the Mind from the Body: a short animated explainer of how the brain and the body signal each other", tone: "blue" },
-        credit: "Video anatomy adapted from BodyParts3D, © The Database Center for Life Science, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).",
       },
       {
         id: "perimeter",
