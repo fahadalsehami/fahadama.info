@@ -122,7 +122,7 @@ window.SITE = {
         detail:
           "A vision transformer that reads an image as its parts, not as a grid of squares: each picture becomes an oriented cell complex of regions, and one signed pass along the region borders gives every region's exact area, centre and spread. In a CPU pilot on Imagewoof, region tokens beat patch tokens on all three seeds (64.7% vs 62.8% top-1) with 69% of the compute.",
         tags: ["Vision transformers", "Topological deep learning", "In progress"],
-        media: { image: "content/projects/perimeter.webp", alt: "A frame from the Perimeter explainer: SLIC splits a photo of a dog into regions, the sky into a few large ones and the head and legs into their own", tone: "blue" },
+        media: { video: "content/projects/perimeter.mp4", poster: "content/projects/perimeter.webp", length: "11:05", alt: "Perimeter, explained: an animated walkthrough of how the model reads a picture as regions joined by signed borders, and what the experiment found", tone: "blue" },
       },
       {
         id: "cello",
