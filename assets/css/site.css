@@ -430,6 +430,17 @@ h1, h2, h3, p, ul, ol, dl, dd, figure { margin: 0; }
 }
 .role-title a { color: var(--ink); text-decoration-color: color-mix(in srgb, var(--ink) 35%, transparent); }
 .role-logo { flex: none; width: 44px; height: 44px; border-radius: 12px; box-shadow: 0 0 0 1px var(--line); }
+/* A lettered tile for roles with no logo image */
+.role-mark {
+  display: inline-grid;
+  place-items: center;
+  background: var(--mat);
+  color: var(--ink);
+  font-size: 11.5px;
+  font-weight: 640;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
 .role-place, .role-detail { margin-left: 58px; }
 .role-place { margin-top: 6px; font-size: 15px; color: var(--slate); }
 .role-detail { max-width: 64ch; margin-top: 12px; font-size: 17px; color: var(--ink-2); }
@@ -559,6 +570,26 @@ h1, h2, h3, p, ul, ol, dl, dd, figure { margin: 0; }
 .talk-place { margin-top: 10px; font-size: 16px; color: var(--slate); }
 .talk-role { margin-top: 2px; font-size: 16px; color: var(--ink-2); }
 .talk-detail { max-width: 46ch; margin-top: 16px; font-size: 17px; line-height: 1.62; color: var(--ink-2); }
+/* Talks and prizes without photos: one line each, under the others */
+.talks-brief {
+  display: grid;
+  gap: 18px;
+  margin-top: clamp(64px, 8vw, 104px);
+  padding: 30px 0 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+.talk-brief {
+  display: grid;
+  grid-template-columns: 10.5em minmax(0, 1fr);
+  gap: 24px;
+  align-items: baseline;
+  scroll-margin-top: 96px;
+}
+.talk-brief-year { font-size: 15px; color: var(--slate); font-variant-numeric: tabular-nums; }
+.talk-brief-text { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+.talk-brief-title { font-size: clamp(20px, 2vw, 24px); font-weight: 430; line-height: 1.2; letter-spacing: -0.02em; }
+.talk-brief-place { font-size: 15px; color: var(--slate); }
 
 /* ---------- Bookshelf ---------- */
 .shelf-hint { margin: -22px 0 22px; font-size: 14.5px; color: var(--slate); }
@@ -1019,6 +1050,7 @@ a.contact-value:hover { text-decoration: underline; text-decoration-color: var(-
   .role-when { padding-top: 0; }
   .role::before { top: 6px; }
   .role-place, .role-detail { margin-left: 0; }
+  .talk-brief { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .works { grid-template-columns: minmax(0, 1fr); padding-bottom: 0; }
   .work:nth-child(even) { transform: none; }
   .interests { grid-template-columns: repeat(2, minmax(0, 1fr)); }
