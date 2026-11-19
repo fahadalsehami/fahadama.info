@@ -220,6 +220,8 @@
       lanes = [];
       var eyesY = vB.cy - (1.603 - vB.yc) * vB.s;
       var laneTop = clamp(eyesY - 6, Math.max(H * 0.14, 96), anchor.y - 120), laneBot = Math.max(laneTop + 60, anchor.y - 40);
+      // keep the labels apart on short screens: at least 22px between lanes, raising the top lane if needed
+      if (laneBot - laneTop < 22 * (CHANNELS.length - 1)) laneTop = Math.max(84, laneBot - 22 * (CHANNELS.length - 1));
       for (var k = 0; k < CHANNELS.length; k++) lanes.push(laneTop + ((laneBot - laneTop) * k) / (CHANNELS.length - 1));
       var nf = clamp(Math.round(face.d * face.d * 0.032), 1400, 4800);
       if (M) nf = Math.min(nf, M.brain.length);
