@@ -151,7 +151,10 @@
       var li = make("li", "role");
       li.appendChild(make("p", "role-when", text(r.dates)));
       var body = make("div", "role-body");
-      var logo = r.logo && r.logo.src ? '<img class="role-logo" src="' + esc(r.logo.src) + '" alt="" width="44" height="44" loading="lazy" decoding="async">' : "";
+      // A logo image, or a lettered tile ({ mark: "UCSF" }) for roles with no image.
+      var logo = "";
+      if (r.logo && r.logo.src) logo = '<img class="role-logo" src="' + esc(r.logo.src) + '" alt="" width="44" height="44" loading="lazy" decoding="async">';
+      else if (r.logo && r.logo.mark) logo = '<span class="role-logo role-mark" aria-hidden="true">' + text(r.logo.mark) + "</span>";
       var org = r.org ? (r.orgUrl ? "<a " + linkAttrs(r.orgUrl) + ">" + outText(r.org) + (isExternal(r.orgUrl) ? NEWTAB : "") + "</a>" : text(r.org)) : "";
       body.appendChild(make("h3", "role-title", logo + '<span class="role-name">' + text(r.title) + (org ? ", " + org : "") + "</span>"));
       if (r.place) body.appendChild(make("p", "role-place", text(r.place)));
@@ -225,10 +228,22 @@
     if (!items.length) { sec.remove(); return; }
     head(sec, "talks", talks.title || "Talks", talks.note);
     var ol = make("ol", "talks");
-    items.forEach(function (t, i) {
-      var li = make("li", "talk" + (i % 2 ? " is-flipped" : ""));
-      if (t.id) li.id = "talk-" + t.id;
+    // Items without photos are listed one line each, under the others.
+    var brief = make("ul", "talks-brief");
+    var shown = 0;
+    items.forEach(function (t) {
       var photos = list(t.photos).filter(function (ph) { return ph && ph.src; }).slice(0, 2);
+      if (!photos.length) {
+        var row = make("li", "talk-brief",
+          '<p class="talk-brief-year">' + text(t.year || "") + "</p>" +
+          '<p class="talk-brief-text"><span class="talk-brief-title">' + text(t.title) + "</span>" +
+          (t.place ? '<span class="talk-brief-place">' + text(t.place) + "</span>" : "") + "</p>");
+        if (t.id) row.id = "talk-" + t.id;
+        brief.appendChild(row);
+        return;
+      }
+      var li = make("li", "talk" + (shown++ % 2 ? " is-flipped" : ""));
+      if (t.id) li.id = "talk-" + t.id;
       if (photos.length) {
         var wall = make("div", "talk-photos " + (photos.length > 1 ? "is-pair" : "is-single"));
         photos.forEach(function (ph, k) {
@@ -253,7 +268,8 @@
       li.appendChild(body);
       ol.appendChild(li);
     });
-    sec.appendChild(ol);
+    if (shown) sec.appendChild(ol);
+    if (brief.children.length) sec.appendChild(brief);
   })();
 
   /* ---------------- bookshelf (mounted when near) ---------------- */
