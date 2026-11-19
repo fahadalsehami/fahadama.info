@@ -208,6 +208,12 @@
             if (p && p.catch) p.catch(function () {});
             v.focus();
           });
+          // One narration at a time: starting this video pauses any other that is playing.
+          v.addEventListener("play", function () {
+            Array.prototype.forEach.call(document.querySelectorAll(".work-media video"), function (o) {
+              if (o !== v && !o.paused) o.pause();
+            });
+          });
           // Pause when the video scrolls out of view, so its narration never plays unseen.
           if ("IntersectionObserver" in window) {
             new IntersectionObserver(function (es) {
