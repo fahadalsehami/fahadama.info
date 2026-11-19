@@ -82,5 +82,5 @@ The live site is [fahadama.info](https://fahadama.info). GitHub Pages serves it 
 - Font under the SIL Open Font License: Bricolage Grotesque (The Bricolage Grotesque Project Authors). The license is in `assets/fonts/`.
 - Logos: Medera's mark from medera.info and BOTIM's wordmark (on BOTIM blue) from botim.me, captured November 2026. They belong to their owners and are shown only to identify the companies. The other roles show their names' letters, not logos.
 - Screenshots: medera.info's agents and Medera Glass pages, the BH-ASR leaderboard and its Two gates explainer on Hugging Face, a frame from the Perimeter explainer video, botim.me and Signal & Symptom on Substack. The portrait comes from Signal & Symptom.
-- Reading the Mind from the Body: the video's anatomy is adapted from BodyParts3D, © The Database Center for Life Science, licensed under CC BY 4.0. Its card carries the same credit.
+- Reading the Mind from the Body: the video's anatomy is adapted from BodyParts3D, © The Database Center for Life Science, licensed under CC BY 4.0.
 - Talks & prizes: the MIT Hacking Medicine photos (New York, 2018) are Fahad's own. The Regeneron ISEF 2024 artwork belongs to Society for Science and is shown only to identify the event.
