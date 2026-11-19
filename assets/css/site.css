@@ -479,6 +479,47 @@ h1, h2, h3, p, ul, ol, dl, dd, figure { margin: 0; }
   border-radius: 12px 12px 6px 6px;
   box-shadow: var(--shadow-img), 0 0 0 1px rgba(12, 32, 51, 0.06);
 }
+.work-media video {
+  position: absolute;
+  left: 8%;
+  top: 11%;
+  width: 84%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background: #000;
+  border-radius: 12px 12px 6px 6px;
+  box-shadow: var(--shadow-img), 0 0 0 1px rgba(12, 32, 51, 0.06);
+}
+.video-play {
+  position: absolute;
+  /* bottom-right corner of the 16:9 video, which ends 20.27% above the 16:11 mat's bottom */
+  right: calc(8% + 14px);
+  bottom: calc(20.27% + 14px);
+  transform-origin: 100% 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 20px 11px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--sky);
+  color: #0C2033;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 560;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.video-play:hover { transform: scale(1.04); box-shadow: 0 14px 36px rgba(0, 0, 0, 0.34); }
+@media (max-width: 560px) {
+  .video-play { right: calc(8% + 10px); bottom: calc(20.27% + 10px); gap: 8px; padding: 8px 14px 8px 11px; font-size: 13.5px; }
+  .video-play svg { width: 15px; height: 15px; }
+}
+.video-play svg { width: 18px; height: 18px; fill: currentColor; }
+.video-length { font-weight: 440; opacity: 0.72; font-variant-numeric: tabular-nums; }
+.work-media.is-playing .video-play { display: none; }
+.work-credit { max-width: 50ch; margin-top: 14px; font-size: 12.5px; line-height: 1.5; color: var(--slate); }
 .work-media.is-drawn { background: radial-gradient(90% 90% at 50% 42%, #F5FBFF 0%, #D2ECFF 72%, #C3E4FB 100%); }
 [data-theme="dark"] .work-media.is-drawn { background: radial-gradient(90% 90% at 50% 42%, #173452 0%, #0D2032 72%, #0A1826 100%); }
 .complex-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }

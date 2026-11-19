@@ -190,6 +190,31 @@
           media.setAttribute("aria-hidden", "true");
           if (isExternal(url)) { media.setAttribute("target", "_blank"); media.setAttribute("rel", "noopener"); }
         }
+      } else if (m && typeof m === "object" && m.video) {
+        // A narrated video: its poster shows until the visitor presses Play, and nothing plays by itself.
+        media = make("div", "work-media is-video",
+          '<video preload="none" playsinline' + (m.poster ? ' poster="' + esc(m.poster) + '"' : "") +
+            ' aria-label="' + esc(m.alt || "") + '"><source src="' + esc(m.video) + '" type="video/mp4"></video>' +
+          '<button class="video-play" type="button" aria-label="Play the video' + (m.length ? ", " + esc(m.length) : "") + '">' +
+            '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>' +
+            "<span>Play</span>" + (m.length ? '<span class="video-length">' + text(m.length) + "</span>" : "") +
+          "</button>");
+        (function (box) {
+          var v = box.querySelector("video");
+          box.querySelector(".video-play").addEventListener("click", function () {
+            v.controls = true;
+            box.classList.add("is-playing");
+            var p = v.play();
+            if (p && p.catch) p.catch(function () {});
+            v.focus();
+          });
+          // Pause when the video scrolls out of view, so its narration never plays unseen.
+          if ("IntersectionObserver" in window) {
+            new IntersectionObserver(function (es) {
+              es.forEach(function (e) { if (!e.isIntersecting && !v.paused) v.pause(); });
+            }).observe(box);
+          }
+        })(media);
       } else if (m === "complex") {
         media = make("div", "work-media is-drawn",
           '<canvas class="complex-canvas" aria-hidden="true"></canvas>' +
@@ -212,6 +237,7 @@
         tags.forEach(function (t) { ul.appendChild(make("li", "", text(t))); });
         body.appendChild(ul);
       }
+      if (p.credit) body.appendChild(make("p", "work-credit", md(p.credit)));
       li.appendChild(body);
       ol.appendChild(li);
     });
