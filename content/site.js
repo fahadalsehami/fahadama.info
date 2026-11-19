@@ -12,7 +12,7 @@ window.SITE = {
   meta: {
     title: "Fahad Alsehami",
     description:
-      "Fahad Alsehami is a serial entrepreneur: founder of Medera, the AI co-therapy OS for behavioral health, and co-founder of BOTIM.",
+      "Fahad Alsehami works on consciousness and brain decoding, with a neuroscience-informed approach to engineering intelligence. He founded Medera and co-founded BOTIM.",
     url: "https://fahadama.info",
   },
 
@@ -28,18 +28,20 @@ window.SITE = {
   },
 
   hero: {
-    intro: "I'm a serial entrepreneur and product builder working where AI meets behavioral health.",
+    intro: "I work on consciousness and brain decoding, with a neuroscience-informed approach to engineering intelligence.",
   },
 
   /* ---------------- About ---------------- */
   about: {
-    lead: "What I do:",
-    statement: "build from zero to scale, take research into the clinic, and make AI earn trust.",
+    lead: "What drives me:",
+    statement: "understanding intelligence and engineering it are one endeavor.",
     paragraphs: [
-      "I'm the founder of [Medera](https://www.medera.info), the AI co-therapy OS for behavioral health, and a co-founder of BOTIM. I work across multi-agent orchestration, clinical speech recognition in English and Arabic, multimodal biomarkers (vocal, facial, physiological, neuro and clinical), and FHIR and HL7 interoperability.",
-      "I care about verification: the layers that make language models safe enough for psychiatry. I write about it in [Signal & Symptom](https://alsehami.substack.com).",
+      "I study how internal states such as arousal, feeling and the sense of self arise in the brain, and how they surface in the voice, face, heart and breath. My current proposal, [*Reading the Mind from the Body*](#projects/reading-the-mind), would record those signals alongside deep-brain activity, so they can be checked against the brain itself.",
+      "What the brain teaches shapes what I build. At [Medera](https://www.medera.info), which I founded, I built vocal, facial and physiological biomarkers mapped to the brain's research domains (RDoC), and clinical speech recognition in English and Arabic. In my own research I build vision transformers that see an image as parts rather than a grid, and I certify what language models may claim.",
+      "Before that I co-founded BOTIM. I write about verifying AI for the mind in [Signal & Symptom](https://alsehami.substack.com).",
     ],
     facts: [
+      { label: "Focus", value: "Consciousness, brain decoding and neuroscience-informed AI" },
       { label: "Education", value: "M.S. Digital Health Informatics, University of San Francisco" },
       { label: "Languages", value: "Arabic and English" },
       { label: "Recognition", value: "[MIT Hacking Medicine Grand Prize, New York 2018](#talks/mit-hacking-medicine)" },
@@ -99,57 +101,19 @@ window.SITE = {
      a cell complex drawn live. Link to an item with #projects/<id>. */
   projects: {
     title: "Selected work",
-    note: "Things I've built and shipped :)",
+    note: "Research in progress, and things I've built and shipped :)",
     items: [
       {
-        id: "co-therapy",
-        eyebrow: "Built at Medera",
-        title: "Co-therapy OS",
-        url: "https://www.medera.info/clinical/agents",
+        id: "reading-the-mind",
+        eyebrow: "Research proposal, in progress",
+        title: "Reading the Mind from the Body",
+        url: "",
         detail:
-          "23 agents carry the work around every therapy session, from the intake packet to the claim, kept in step by a Care Orchestrator. A clinician approves every step.",
-        tags: ["Multi-agent", "FHIR R4", "Clinician in the loop"],
-        media: { image: "content/projects/co-therapy-os.webp", alt: "The Medera agents page: Meet the team around every session", tone: "sky" },
-      },
-      {
-        id: "bh-asr",
-        eyebrow: "Open benchmark from Medera",
-        title: "Medera BH-ASR",
-        url: "https://huggingface.co/Medera/medera-bh-asr",
-        detail:
-          "Speech recognition for behavioral-health conversations in English and Arabic. It sits at the top of a public 13-recognizer leaderboard for English consultations and invents no drug names under a medication prompt. Now extending to Arabic dialects, Persian, Spanish and Mandarin.",
-        tags: ["English", "Arabic", "Hugging Face"],
-        media: { image: "content/projects/bh-asr-leaderboard.webp", alt: "The behavioral-health speech recognition leaderboard, with Medera BH-ASR Pro first of 13 recognizers", tone: "lilac" },
-      },
-      {
-        id: "glass",
-        eyebrow: "EHR write-back at Medera",
-        title: "Medera Glass",
-        url: "https://www.medera.info/clinical/platform/glass",
-        detail:
-          "Agents sign in to the EHR a practice already runs and file the notes, codes, scores and letters, the way a careful colleague would. No interface project, no copy-paste.",
-        tags: ["Browser agents", "EHR", "Audit log"],
-        media: { image: "content/projects/medera-glass.webp", alt: "The Medera Glass page: Your chart, already up to date", tone: "mint" },
-      },
-      {
-        id: "explainers",
-        eyebrow: "Explainer videos for Medera",
-        title: "Seven explainers",
-        url: "https://huggingface.co/Medera/medera-bh-asr#explainers",
-        detail:
-          "Short animations, captioned in English and Arabic, that explain BH-ASR's safety numbers without the math: why recall is the product of two gates, how evidence adds in log-odds, what an interval can and cannot prove, and why a voice is best measured against its own baseline.",
-        tags: ["Animation", "English and Arabic", "Hugging Face"],
-        media: { image: "content/projects/explainers.webp", alt: "A frame from the Two gates explainer: recall is the product of the two gates", tone: "paper" },
-      },
-      {
-        id: "hallucination-guard",
-        eyebrow: "Medera research, in progress",
-        title: "Hallucination guard",
-        url: "https://alsehami.substack.com/p/the-epistemological-crisis-of-llms",
-        detail:
-          "An end-to-end hallucination-detection and consensus layer that checks open-source models alongside Claude, OpenAI and Grok, modeled on Vectara's HHEM. My manuscript *Certify the Gate, Not the Generator* certifies which claims may reach a reader: on 81,414 MedLFQA claims it keeps 77.8% at a 3% unsupported rate. I wrote about the problem it tackles in Signal & Symptom.",
-        tags: ["Multi-LLM", "Verification", "Open source"],
-        media: { image: "content/projects/hallucination-essay.webp", alt: "The Signal & Symptom essay on LLM hallucination detection in psychiatry", tone: "paper" },
+          "Feelings leave traces in the body: heart rhythm, voice, face, breath, skin and eyes. This study records them alongside deep-brain activity in people already undergoing epilepsy monitoring, maps which brain circuit drives which body signal, how strongly and how fast, and links each to the research dimensions of mental health (RDoC). The goal is an open readout model that learns from the brain, then runs on the body alone and says how certain it is.",
+        tags: ["Neuroscience", "Multimodal biomarkers", "In progress"],
+        // A narrated video: the poster shows until the visitor presses Play. `length` labels the button.
+        media: { video: "content/projects/reading-the-mind.mp4", poster: "content/projects/reading-the-mind.webp", length: "2:54", alt: "Reading the Mind from the Body: a short animated explainer of how the brain and the body signal each other", tone: "blue" },
+        credit: "Video anatomy adapted from BodyParts3D, © The Database Center for Life Science, licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).",
       },
       {
         id: "perimeter",
@@ -170,6 +134,56 @@ window.SITE = {
           "Vision transformers on oriented cell complexes: each block passes messages between image patches, their adjacencies and 2 × 2 squares, so the model sees how patches are arranged, not only which belong together. On CIFAR-10 it reaches 89.54% at about 0.1 GMACs, against at most 88.56% for ViT and HgVT (one seed so far), and early exits certified with Learn-then-Test cut compute 2.18×.",
         tags: ["Topological deep learning", "Vision transformers", "In progress"],
         media: "complex", // a turning cell complex, drawn live; swap for a screenshot once results are public
+      },
+      {
+        id: "hallucination-guard",
+        eyebrow: "Medera research, in progress",
+        title: "Hallucination guard",
+        url: "https://alsehami.substack.com/p/the-epistemological-crisis-of-llms",
+        detail:
+          "An end-to-end hallucination-detection and consensus layer that checks open-source models alongside Claude, OpenAI and Grok, modeled on Vectara's HHEM. My manuscript *Certify the Gate, Not the Generator* certifies which claims may reach a reader: on 81,414 MedLFQA claims it keeps 77.8% at a 3% unsupported rate. I wrote about the problem it tackles in Signal & Symptom.",
+        tags: ["Multi-LLM", "Verification", "Open source"],
+        media: { image: "content/projects/hallucination-essay.webp", alt: "The Signal & Symptom essay on LLM hallucination detection in psychiatry", tone: "paper" },
+      },
+      {
+        id: "bh-asr",
+        eyebrow: "Open benchmark from Medera",
+        title: "Medera BH-ASR",
+        url: "https://huggingface.co/Medera/medera-bh-asr",
+        detail:
+          "Speech recognition for behavioral-health conversations in English and Arabic. It sits at the top of a public 13-recognizer leaderboard for English consultations and invents no drug names under a medication prompt. Now extending to Arabic dialects, Persian, Spanish and Mandarin.",
+        tags: ["English", "Arabic", "Hugging Face"],
+        media: { image: "content/projects/bh-asr-leaderboard.webp", alt: "The behavioral-health speech recognition leaderboard, with Medera BH-ASR Pro first of 13 recognizers", tone: "lilac" },
+      },
+      {
+        id: "co-therapy",
+        eyebrow: "Built at Medera",
+        title: "Co-therapy OS",
+        url: "https://www.medera.info/clinical/agents",
+        detail:
+          "23 agents carry the work around every therapy session, from the intake packet to the claim, kept in step by a Care Orchestrator. A clinician approves every step.",
+        tags: ["Multi-agent", "FHIR R4", "Clinician in the loop"],
+        media: { image: "content/projects/co-therapy-os.webp", alt: "The Medera agents page: Meet the team around every session", tone: "sky" },
+      },
+      {
+        id: "glass",
+        eyebrow: "EHR write-back at Medera",
+        title: "Medera Glass",
+        url: "https://www.medera.info/clinical/platform/glass",
+        detail:
+          "Agents sign in to the EHR a practice already runs and file the notes, codes, scores and letters, the way a careful colleague would. No interface project, no copy-paste.",
+        tags: ["Browser agents", "EHR", "Audit log"],
+        media: { image: "content/projects/medera-glass.webp", alt: "The Medera Glass page: Your chart, already up to date", tone: "mint" },
+      },
+      {
+        id: "explainers",
+        eyebrow: "Explainer videos for Medera",
+        title: "Seven explainers",
+        url: "https://huggingface.co/Medera/medera-bh-asr#explainers",
+        detail:
+          "Short animations, captioned in English and Arabic, that explain BH-ASR's safety numbers without the math: why recall is the product of two gates, how evidence adds in log-odds, what an interval can and cannot prove, and why a voice is best measured against its own baseline.",
+        tags: ["Animation", "English and Arabic", "Hugging Face"],
+        media: { image: "content/projects/explainers.webp", alt: "A frame from the Two gates explainer: recall is the product of the two gates", tone: "paper" },
       },
       {
         id: "botim",
