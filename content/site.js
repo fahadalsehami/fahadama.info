@@ -267,10 +267,36 @@ window.SITE = {
      (shorter text for the spine only), reading: true (show that book first),
      cover: "content/books/…" (a real cover image). height/width run about 0.75–1.15 and 0.7–1.4. */
   books: {
-    title: "On the shelf: machine learning, statistics, history and power.",
+    title: "On the shelf: neuroscience, machine learning, statistics, history and power.",
     hint: "Hover to preview. Drag to browse. Select a book to open it.",
     // Each note is the book's own subtitle or edition. Replace any with your own words.
     items: [
+      // The brain, and how it gives rise to the mind
+      {
+        title: "A Thousand Brains", author: "Jeff Hawkins",
+        note: "A New Theory of Intelligence.",
+        color: "#F4E22A", accent: "#D9473A", ink: "#1C1C1C", height: 1.0, width: 1.0,
+      },
+      {
+        title: "Rhythms of the Brain", author: "György Buzsáki",
+        note: "",
+        color: "#2F3546", accent: "#BAA974", ink: "#E6D7A3", height: 1.05, width: 1.25, font: "serif",
+      },
+      {
+        title: "Brain Flows", author: "Michael W. Cole",
+        note: "How Network Dynamics Compose the Human Mind.",
+        color: "#E8F4F3", accent: "#3E95AE", ink: "#1A2326", height: 1.0, width: 0.95,
+      },
+      {
+        title: "Theoretical Neuroscience", author: "Xiao-Jing Wang",
+        note: "Understanding Cognition.",
+        color: "#140B0F", accent: "#9B7463", ink: "#EDE2D6", height: 1.1, width: 1.3,
+      },
+      {
+        title: "Elusive Cures", author: "Nicole C. Rust",
+        note: "Why Neuroscience Hasn’t Solved Brain Disorders—and How We Can Change That.",
+        color: "#4D8CC2", accent: "#A9CC9F", ink: "#F5F9FC", height: 1.0, width: 0.95,
+      },
       // Machine learning and the math beneath it
       {
         title: "Deep Learning", author: "Ian Goodfellow, Yoshua Bengio & Aaron Courville",
@@ -336,6 +362,11 @@ window.SITE = {
         title: "Artificial Intelligence", author: "Nils J. Nilsson",
         note: "A New Synthesis.",
         color: "#4A2D80", accent: "#E7E1F4", height: 1.04, width: 1.0,
+      },
+      {
+        title: "An Illustrated Guide to AI Agents", author: "Maarten Grootendorst & Jay Alammar",
+        note: "Concepts and Code for Building Agents with LLMs, Tools, and Memory.",
+        color: "#F4F4F2", accent: "#D3002D", ink: "#1C1C1C", height: 1.08, width: 1.15,
       },
       // AI and people
       {
