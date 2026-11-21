@@ -1,7 +1,7 @@
 /* ==========================================================================
    Builds the page from content/site.js and runs what moves: the hero
    signals, the thread down the page, the nav, the theme, deep links, and
-   the Bookshelf and Play Me sections when they come near.
+   the Interests figures and Play Me when they come near.
    ========================================================================== */
 (function () {
   "use strict";
@@ -73,7 +73,6 @@
   var about = S.about || {};
   var projects = S.projects || {};
   var talks = S.talks || {};
-  var books = S.books || {};
   var interests = S.interests || {};
   var play = S.play || {};
   var contact = S.contact || {};
@@ -303,18 +302,6 @@
     if (brief.children.length) sec.appendChild(brief);
   })();
 
-  /* ---------------- bookshelf (mounted when near) ---------------- */
-  (function () {
-    var sec = $('[data-slot="bookshelf"]');
-    var items = list(books.items);
-    if (!items.length || !window.Bookshelf) { sec.remove(); return; }
-    head(sec, "bookshelf", "Bookshelf", books.title);
-    if (books.hint) sec.appendChild(make("p", "shelf-hint", text(books.hint)));
-    var slot = make("div", "shelf-slot");
-    sec.appendChild(slot);
-    whenNear(sec, function () { window.Bookshelf.mount(slot, items); });
-  })();
-
   var FIGURE_LABELS = {
     network: "A social graph in points: a hub of influence and the ties around it",
     camera: "A video camera on a tripod, drawn in points",
@@ -433,7 +420,7 @@
   /* ---------------- nav ---------------- */
   var NAV = [
     ["about", "About"], ["experience", "Work"], ["projects", "Projects"], ["talks", "Talks"],
-    ["bookshelf", "Books"], ["interests", "Interests"], ["play", "Play"],
+    ["interests", "Interests"], ["play", "Play"],
   ];
   var navList = $('[data-slot="nav"]');
   var links = {};
@@ -567,7 +554,7 @@
 
   /* ---------------- deep links ----------------
      #projects/<id>, #talks/<id> and #interests/<id> open on that item;
-     #about, #experience, #bookshelf and the rest scroll natively. */
+     #about, #experience and the rest scroll natively. */
   function target(hash) {
     var m = /^#(projects|talks|interests)\/([\w-]+)$/.exec(hash || "");
     if (!m) return null;
